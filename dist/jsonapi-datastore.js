@@ -1,18 +1,20 @@
-function DataGraphModel(type, id) {
+function JsonApiDataStoreModel(type, id) {
   this.id = id;
   this._type = type;
   this._attributes = [];
   this._relationships = [];
 }
 
-DataGraphModel.prototype.serialize = function(opts) {
+JsonApiDataStoreModel.prototype.serialize = function() {
   var self = this,
-      res = {},
+      res,
       key;
 
-  res.data = {
-    type: this._type,
-    id: this.id
+  res = {
+    data: {
+      type: this._type,
+      id: this.id
+    }
   };
 
   if (this._attributes.length !== 0) res.data.attributes = [];
@@ -23,39 +25,47 @@ DataGraphModel.prototype.serialize = function(opts) {
   });
 
   this._relationships.forEach(function(key) {
+    function relationshipIdentifier(model) {
+      return { type: model._type, id: model.id };
+    }
     if (self[key].constructor === Array) {
       res.data.relationships[key] = {
-        data: self[key].map(function(rel) {
-          return { type: rel._type, id: rel.id };
-        })
+        data: self[key].map(relationshipIdentifier)
       };
     } else {
       res.data.relationships[key] = {
-        data: { type: self[key]._type, id: self[key].id }
+        data: relationshipIdentifier(self[key])
       };
     }
   });
 
   return res;
 };
-
-function DataGraph() {
+function JsonApiDataStore() {
   this.graph = {};
 }
 
-DataGraph.prototype.find = function(type, id) {
+JsonApiDataStore.prototype.reset = function() {
+  this.graph = {};
+};
+
+JsonApiDataStore.prototype.find = function(type, id) {
   if (!this.graph[type] || !this.graph[type][id]) return null;
   return this.graph[type][id];
 };
 
-DataGraph.prototype.initModel = function(type, id) {
+JsonApiDataStore.prototype.destroy = function(model) {
+  delete this.graph[model._type][model.id];
+};
+
+JsonApiDataStore.prototype.initModel = function(type, id) {
   this.graph[type] || (this.graph[type] = {});
-  this.graph[type][id] || (this.graph[type][id] = new DataGraphModel(type, id));
+  this.graph[type][id] || (this.graph[type][id] = new JsonApiDataStoreModel(type, id));
 
   return this.graph[type][id];
 };
 
-DataGraph.prototype.syncRecord = function(rec) {
+JsonApiDataStore.prototype.syncRecord = function(rec) {
   var self = this,
       model = this.initModel(rec.type, rec.id),
       key;
@@ -97,7 +107,7 @@ DataGraph.prototype.syncRecord = function(rec) {
   return model;
 };
 
-DataGraph.prototype.sync = function(data) {
+JsonApiDataStore.prototype.sync = function(data) {
   var self = this;
   function sync(data) {
     if (!data) return null;
@@ -109,8 +119,4 @@ DataGraph.prototype.sync = function(data) {
   };
   sync(data.included);
   return sync(data.data);
-};
-
-DataGraph.prototype.reset = function() {
-  this.graph = {};
 };
