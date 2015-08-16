@@ -38,6 +38,10 @@ console.log(article.serialize());
 
 TODO
 
+## What's missing
+
+Currently, the store does not handle `links` and `meta` attributes.
+
 ## Contributing
 
 All pull-requests welcome!
