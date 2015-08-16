@@ -1,6 +1,8 @@
-# JsonApiDataStore
+# jsonapi-datastore
 
 JavaScript client-side [JSON API](http://jsonapi.org) data handling made easy.
+
+Current version is v0.1.0-alpha. It is still a work in progress, but should do what it says.
 
 ## Installing
 
