@@ -6,7 +6,10 @@ Current version is v0.1.0-alpha. It is still a work in progress, but should do w
 
 ## Installing
 
-TODO
+Install jsonapi-datastore by running:
+```
+$ bower install jsonapi-datastore
+```
 
 ## Parsing data
 
@@ -31,7 +34,7 @@ In case a related resource has not been fetched yet (either as a primary resourc
 
 ## Serializing data
 
-Just call the `.serialize()` method the model.
+Just call the `.serialize()` method on the model.
 ```
 console.log(article.serialize());
 ```
@@ -43,6 +46,19 @@ TODO
 ## What's missing
 
 Currently, the store does not handle `links` and `meta` attributes.
+
+## Notes
+
+### AngularJS
+
+In order to use jsonapi-datastore inside an AngularJS project, simply require the plugin in your `index.html` and then make a factory:
+```
+angular
+  .module('myApp')
+  .factory('JsonApiDataStore', function() {
+    return new JsonApiDataStore();
+  });
+```
 
 ## Contributing
 
