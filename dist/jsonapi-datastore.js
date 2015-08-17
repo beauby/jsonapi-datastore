@@ -41,6 +41,7 @@ JsonApiDataStoreModel.prototype.serialize = function() {
 
   return res;
 };
+
 function JsonApiDataStore() {
   this.graph = {};
 }
