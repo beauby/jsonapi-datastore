@@ -1,3 +1,8 @@
+var fs = require('fs'),
+    expect = require('chai').expect;
+
+eval(fs.readFileSync('dist/jsonapi-datastore.js', 'utf-8'));
+
 describe('JsonApiDataModel', function() {
   describe('.serialize()', function() {
     it('should serialize a bare model', function() {
@@ -50,7 +55,6 @@ describe('JsonApiDataModel', function() {
 
       var article = store.sync(payload);
       var serializedArticle = article.serialize();
-      console.log(serializedArticle);
       expect(serializedArticle).to.deep.eq(payload);
     });
   });

@@ -1,3 +1,8 @@
+var fs = require('fs'),
+    expect = require('chai').expect;
+
+eval(fs.readFileSync('dist/jsonapi-datastore.js', 'utf-8'));
+
 describe('JsonApiDataStore', function() {
   describe('.sync()', function() {
     context('when given a simple payload', function() {
