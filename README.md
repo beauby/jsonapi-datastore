@@ -43,6 +43,17 @@ console.log(article.serialize());
 
 TODO
 
+## API
+
+`JsonApiDataStoreModel`
+- `.serialize()`: serialize a model
+
+`JsonApiDataStore`
+- `.sync(payload)`: syncs the models described by the payload with the store, and returns the synched models
+- `.find(type, id)`: retrieve a model by `type` and `id`
+- `.destroy(model)`: remove a model from the store
+- `.reset()`: empties the store
+
 ## What's missing
 
 Currently, the store does not handle `links` and `meta` attributes.
