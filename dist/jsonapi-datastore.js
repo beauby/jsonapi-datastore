@@ -17,8 +17,8 @@ JsonApiDataStoreModel.prototype.serialize = function() {
     }
   };
 
-  if (this._attributes.length !== 0) res.data.attributes = [];
-  if (this._relationships.length !== 0) res.data.relationships = [];
+  if (this._attributes.length !== 0) res.data.attributes = {};
+  if (this._relationships.length !== 0) res.data.relationships = {};
 
   this._attributes.forEach(function(key) {
     res.data.attributes[key] = self[key];
