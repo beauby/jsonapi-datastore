@@ -41,7 +41,83 @@ console.log(article.serialize());
 
 ## Examples
 
-TODO
+Starting by creating a store:
+```
+var store = new JsonApiDataStore();
+```
+and given the following payload, containing two `articles`, with a related `user` who is the author of both:
+```
+var payload = {
+  data: [{
+    type: 'article',
+    id: 1337,
+    attributes: {
+      title: 'Cool article'
+    },
+    relationships: {
+      author: {
+        data: {
+          type: 'user',
+          id: 1
+        }
+      }
+    }
+  }, {
+    type: 'article',
+    id: 300,
+    attributes: {
+      title: 'Even cooler article'
+    },
+    relationships: {
+      author: {
+        data: {
+          type: 'user',
+          id: 1
+        }
+      }
+    }
+  }]
+};
+```
+we can sync it:
+```
+var articles = store.sync(payload);
+```
+which will return the list of synced articles.
+
+Later, we can retrieve one of those:
+```
+var article = store.find('article', 1337);
+```
+If the author resource has not been synced yet, we can only access its id:
+```
+console.log(article.author);
+// { id: 1 }
+```
+If we do sync the author resource later:
+```
+var authorPayload = {
+  data: {
+    type: 'user',
+    id: 1,
+    attributes: {
+      name: 'Lucas'
+    }
+  }
+};
+
+store.sync(authorPayload);
+```
+we can then access the author's name through our old `article` reference:
+```
+console.log(article.author.name);
+// 'Lucas'
+```
+We can also serialize any model in a JSONAPI-compliant way:
+```
+console.log(article.serialize());
+// ...
+```
 
 ## API
 
