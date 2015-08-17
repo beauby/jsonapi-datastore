@@ -8,8 +8,7 @@
   "description": "JavaScript client-side JSON API data handling made easy.",
   "main": "dist/jsonapi-datastore.js",
   "moduleType": [
-    "globals",
-    "node"
+    "globals"
   ],
   "keywords": [
     "JSON",
@@ -22,9 +21,11 @@
   "ignore": [
     "**/.*",
     "src",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ]
+    "components",
+    "test"
+  ],
+  "devDependencies": {
+    "mocha": "~2.2.5",
+    "chai": "~3.2.0"
+  }
 }
