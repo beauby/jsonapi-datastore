@@ -21,7 +21,7 @@
   "ignore": [
     "**/.*",
     "src",
-    "components",
+    "bower_components",
     "test"
   ],
   "devDependencies": {
