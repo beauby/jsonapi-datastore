@@ -141,6 +141,8 @@ angular
       return sync(data.data);
     };
 
-
-    return new JsonApiDataStore();
+    return {
+      store: new JsonApiDataStore(),
+      Model: JsonApiDataStoreModel
+    };
   });
