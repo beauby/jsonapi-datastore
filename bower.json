@@ -1,6 +1,6 @@
 {
   "name": "jsonapi-datastore",
-  "version": "0.1.2-alpha",
+  "version": "0.1.3-alpha",
   "homepage": "https://github.com/beauby/jsonapi-datastore",
   "authors": [
     "Lucas Hosseini <lucas.hosseini@gmail.com>"
