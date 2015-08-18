@@ -3,7 +3,9 @@
   "version": "0.1.2-alpha",
   "description": "JavaScript client-side JSON API data handling made easy.",
   "main": "dist/jsonapi-datastore.js",
-  "files": [ "dist/" ],
+  "files": [
+    "dist/"
+  ],
   "directories": {
     "test": "test"
   },
@@ -31,9 +33,11 @@
     "chai": "^3.2.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
+    "gulp-jsbeautify": "^0.1.1",
     "gulp-mocha": "^2.1.3",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.2.0",
+    "gulp-wrap": "^0.11.0",
     "mocha": "^2.2.5"
   }
 }
