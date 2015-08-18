@@ -133,10 +133,11 @@ console.log(article.serialize({ attributes: ['title'], relationships: []}));
 - `.setRelationship(relname, models)`: set or modify relationship of model
 
 `JsonApiDataStore`
-- `.sync(payload)`: syncs the models described by the payload with the store, and returns the synched models
+- `.graph[modelType]`: get a reference to all models of type `modelType`
+- `.sync(payload)`: sync the models described by the payload with the store, and returns the synched models
 - `.find(type, id)`: retrieve a model by `type` and `id`
 - `.destroy(model)`: remove a model from the store
-- `.reset()`: empties the store
+- `.reset()`: empty the store
 
 ## What's missing
 
