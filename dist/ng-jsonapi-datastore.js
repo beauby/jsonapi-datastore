@@ -13,9 +13,9 @@ angular
         res,
         key;
 
-      opts || (opts = {});
-      opts.attributes || (opts.attributes = this._attributes);
-      opts.relationships || (opts.relationships = this._relationships);
+      opts = opts || {};
+      opts.attributes = opts.attributes || this._attributes;
+      opts.relationships = opts.relationships || this._relationships;
 
       res = {
         data: {
@@ -70,8 +70,8 @@ angular
     };
 
     JsonApiDataStore.prototype.initModel = function(type, id) {
-      this.graph[type] || (this.graph[type] = {});
-      this.graph[type][id] || (this.graph[type][id] = new JsonApiDataStoreModel(type, id));
+      this.graph[type] = this.graph[type] || {};
+      this.graph[type][id] = this.graph[type][id] || new JsonApiDataStoreModel(type, id);
 
       return this.graph[type][id];
     };
@@ -128,7 +128,7 @@ angular
         } else {
           return self.syncRecord(data);
         }
-      };
+      }
       sync(data.included);
       return sync(data.data);
     };

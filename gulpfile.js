@@ -4,12 +4,14 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     mocha = require('gulp-mocha'),
     wrap = require('gulp-wrap'),
-    beautify = require('gulp-jsbeautify');
+    beautify = require('gulp-jsbeautify'),
+    jshint = require('gulp-jshint'),
+    jscs = require('gulp-jscs');
 
 var SRC = 'src/jsonapi-datastore/*.js',
     DEST = 'dist/';
 
-gulp.task('build', function() {
+gulp.task('build', ['jshint', 'jscs'], function() {
   return gulp.src(SRC)
     .pipe(concat('jsonapi-datastore.js'))
     .pipe(gulp.dest(DEST))
@@ -32,6 +34,17 @@ gulp.task('build-angular', ['build'], function() {
 gulp.task('test', ['build'], function() {
   gulp.src('test/*.js')
     .pipe(mocha());
+});
+
+gulp.task('jscs', function() {
+  return gulp.src(SRC)
+    .pipe(jscs());
+});
+
+gulp.task('jshint', function() {
+  return gulp.src(SRC)
+    .pipe(jshint())
+    .pipe(jshint.reporter('default'));
 });
 
 gulp.task('default', ['build', 'build-angular']);

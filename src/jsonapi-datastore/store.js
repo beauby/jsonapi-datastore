@@ -16,8 +16,8 @@ JsonApiDataStore.prototype.destroy = function(model) {
 };
 
 JsonApiDataStore.prototype.initModel = function(type, id) {
-  this.graph[type] || (this.graph[type] = {});
-  this.graph[type][id] || (this.graph[type][id] = new JsonApiDataStoreModel(type, id));
+  this.graph[type] = this.graph[type] || {};
+  this.graph[type][id] = this.graph[type][id] || new JsonApiDataStoreModel(type, id);
 
   return this.graph[type][id];
 };
@@ -73,7 +73,7 @@ JsonApiDataStore.prototype.sync = function(data) {
     } else {
       return self.syncRecord(data);
     }
-  };
+  }
   sync(data.included);
   return sync(data.data);
 };

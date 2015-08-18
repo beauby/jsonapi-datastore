@@ -10,9 +10,9 @@ JsonApiDataStoreModel.prototype.serialize = function(opts) {
       res,
       key;
 
-  opts || (opts = {});
-  opts.attributes || (opts.attributes = this._attributes);
-  opts.relationships || (opts.relationships = this._relationships);
+  opts = opts || {};
+  opts.attributes = opts.attributes || this._attributes;
+  opts.relationships = opts.relationships || this._relationships;
 
   res = {
     data: {
@@ -64,8 +64,8 @@ JsonApiDataStore.prototype.destroy = function(model) {
 };
 
 JsonApiDataStore.prototype.initModel = function(type, id) {
-  this.graph[type] || (this.graph[type] = {});
-  this.graph[type][id] || (this.graph[type][id] = new JsonApiDataStoreModel(type, id));
+  this.graph[type] = this.graph[type] || {};
+  this.graph[type][id] = this.graph[type][id] || new JsonApiDataStoreModel(type, id);
 
   return this.graph[type][id];
 };
@@ -121,7 +121,7 @@ JsonApiDataStore.prototype.sync = function(data) {
     } else {
       return self.syncRecord(data);
     }
-  };
+  }
   sync(data.included);
   return sync(data.data);
 };

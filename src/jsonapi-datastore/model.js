@@ -10,9 +10,9 @@ JsonApiDataStoreModel.prototype.serialize = function(opts) {
       res,
       key;
 
-  opts || (opts = {});
-  opts.attributes || (opts.attributes = this._attributes);
-  opts.relationships || (opts.relationships = this._relationships);
+  opts = opts || {};
+  opts.attributes = opts.attributes || this._attributes;
+  opts.relationships = opts.relationships || this._relationships;
 
   res = {
     data: {
