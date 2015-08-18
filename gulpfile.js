@@ -7,8 +7,8 @@ var gulp = require('gulp'),
 var SRC = 'src/*.js',
     DEST = 'dist/';
 
-gulp.task('build', function() {
-  gulp.src(SRC)
+gulp.task('build', function(done) {
+  return gulp.src(SRC)
     .pipe(concat('jsonapi-datastore.js'))
     .pipe(gulp.dest(DEST))
     .pipe(uglify())
