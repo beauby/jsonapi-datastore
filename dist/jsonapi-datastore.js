@@ -7,20 +7,14 @@ function JsonApiDataStoreModel(type, id) {
 
 JsonApiDataStoreModel.prototype.serialize = function(opts) {
   var self = this,
-      res,
+      res = { data: { type: this._type } },
       key;
 
   opts = opts || {};
   opts.attributes = opts.attributes || this._attributes;
   opts.relationships = opts.relationships || this._relationships;
 
-  res = {
-    data: {
-      type: this._type,
-      id: this.id
-    }
-  };
-
+  if (this.id !== undefined) res.data.id = this.id;
   if (opts.attributes.length !== 0) res.data.attributes = {};
   if (opts.relationships.length !== 0) res.data.relationships = {};
 
@@ -44,6 +38,16 @@ JsonApiDataStoreModel.prototype.serialize = function(opts) {
   });
 
   return res;
+};
+
+JsonApiDataStoreModel.prototype.setAttribute = function(attrName, value) {
+  if (this[attrName] === undefined) this._attributes.push(attrName);
+  this[attrName] = value;
+};
+
+JsonApiDataStoreModel.prototype.setRelationship = function(relName, models) {
+  if (this[relName] === undefined) this._relationships.push(relName);
+  this[relName] = models;
 };
 
 function JsonApiDataStore() {

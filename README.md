@@ -129,6 +129,8 @@ console.log(article.serialize({ attributes: ['title'], relationships: []}));
 
 `JsonApiDataStoreModel`
 - `.serialize(opts)`: serialize a model
+- `.setAttribute(attrName, value)`: set or modify attribute of model
+- `.setRelationship(relname, models)`: set or modify relationship of model
 
 `JsonApiDataStore`
 - `.sync(payload)`: syncs the models described by the payload with the store, and returns the synched models
