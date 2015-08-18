@@ -148,13 +148,23 @@ Currently, the store does not handle `links` and `meta` attributes.
 ### AngularJS
 
 jsonapi-datastore is bundled with an AngularJs wrapper. Just include `ng-jsonapi-datastore.js` in your `index.html` and require the module `beauby.jsonApiDataStore` in your application.
-You can then use the `JsonApiDataStore` factory, which is essentially an instance of `JsonApiDataStore`, as follows:
+You can then use the `JsonApiDataStore` factory, which is essentially defined as follows:
+```javascript
+{
+  store: new JsonApiDataStore(),
+  Model: JsonApiDataStoreModel
+}
+```
+so that you can use it as follows:
 
 ```javascript
 angular
   .module('myApp')
   .controller('myController', function(JsonApiDataStore) {
-    var article = JsonApiDataStore.find('article', 1337);
+    var article = JsonApiDataStore.store.find('article', 1337);
+    var newArticle = new JsonApiDataStore.Model('article');
+    newArticle.setAttribute('title', 'My cool article');
+    console.log(newArticle.serialize());
   });
 ```
 
