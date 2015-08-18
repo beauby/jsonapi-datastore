@@ -113,16 +113,21 @@ we can then access the author's name through our old `article` reference:
 console.log(article.author.name);
 // 'Lucas'
 ```
-We can also serialize any model in a JSONAPI-compliant way:
+We can also serialize any whole model in a JSONAPI-compliant way:
 ```javascript
 console.log(article.serialize());
+// ...
+```
+or just a subset of its attributes/relationships:
+```javascript
+console.log(article.serialize({ attributes: ['title'], relationships: []}));
 // ...
 ```
 
 ## API
 
 `JsonApiDataStoreModel`
-- `.serialize()`: serialize a model
+- `.serialize(opts)`: serialize a model
 
 `JsonApiDataStore`
 - `.sync(payload)`: syncs the models described by the payload with the store, and returns the synched models

@@ -5,10 +5,14 @@ function JsonApiDataStoreModel(type, id) {
   this._relationships = [];
 }
 
-JsonApiDataStoreModel.prototype.serialize = function() {
+JsonApiDataStoreModel.prototype.serialize = function(opts) {
   var self = this,
       res,
       key;
+
+  opts || (opts = {});
+  opts.attributes || (opts.attributes = this._attributes);
+  opts.relationships || (opts.relationships = this._relationships);
 
   res = {
     data: {
@@ -17,14 +21,14 @@ JsonApiDataStoreModel.prototype.serialize = function() {
     }
   };
 
-  if (this._attributes.length !== 0) res.data.attributes = {};
-  if (this._relationships.length !== 0) res.data.relationships = {};
+  if (opts.attributes.length !== 0) res.data.attributes = {};
+  if (opts.relationships.length !== 0) res.data.relationships = {};
 
-  this._attributes.forEach(function(key) {
+  opts.attributes.forEach(function(key) {
     res.data.attributes[key] = self[key];
   });
 
-  this._relationships.forEach(function(key) {
+  opts.relationships.forEach(function(key) {
     function relationshipIdentifier(model) {
       return { type: model._type, id: model.id };
     }
