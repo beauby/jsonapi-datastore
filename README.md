@@ -125,19 +125,9 @@ console.log(article.serialize({ attributes: ['title'], relationships: []}));
 // ...
 ```
 
-## API
+## Documentation
 
-`JsonApiDataStoreModel`
-- `.serialize(opts)`: serialize a model
-- `.setAttribute(attrName, value)`: set or modify attribute of model
-- `.setRelationship(relname, models)`: set or modify relationship of model
-
-`JsonApiDataStore`
-- `.graph[modelType]`: get a reference to all models of type `modelType`
-- `.sync(payload)`: sync the models described by the payload with the store, and returns the synched models
-- `.find(type, id)`: retrieve a model by `type` and `id`
-- `.destroy(model)`: remove a model from the store
-- `.reset()`: empty the store
+See [DOCUMENTATION.md](DOCUMENTATION.md).
 
 ## What's missing
 
