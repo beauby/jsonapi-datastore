@@ -5,6 +5,21 @@ JavaScript client-side [JSON API](http://jsonapi.org) data handling made easy.
 
 Current version is v0.2.0-alpha. It is still a work in progress, but should do what it says.
 
+## Description
+
+The [JSONAPI](http://jsonapi.org) standard is great for exchanging data (which is its purpose), but the format is not ideal to work directly with in an application.
+jsonapi-datastore is a JavaScript framework-agnostic library (but an [AngularJS version](#angularjs) is provided for convenience) that takes away the burden of handling [JSONAPI](http://jsonapi.org) data on the client side.
+
+What it does:
+- read JSONAPI payloads,
+- rebuild the underlying data graph,
+- allows you to query models and access their relationships directly,
+- create new models,
+- serialize models for creation/update.
+
+What it does not do:
+- make requests to your API. You design your endpoints URLs, the way you handle authentication, caching, etc. is totally up to you.
+
 ## Installing
 
 Install jsonapi-datastore by running:
