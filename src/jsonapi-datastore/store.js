@@ -1,18 +1,40 @@
+/**
+ * @class JsonApiDataStore
+ */
+/**
+ * @method constructor
+ */
 function JsonApiDataStore() {
   this.graph = {};
 }
 
-JsonApiDataStore.prototype.reset = function() {
-  this.graph = {};
+/**
+ * Remove a model from the store.
+ * @method destroy
+ * @param {object} model The model to destroy.
+ */
+JsonApiDataStore.prototype.destroy = function(model) {
+  delete this.graph[model._type][model.id];
 };
 
+/**
+ * Retrieve a model by type and id. Constant-time lookup.
+ * @method find
+ * @param {string} type The type of the model.
+ * @param {string} id The id of the model.
+ * @return {object} The corresponding model if present, and null otherwise.
+ */
 JsonApiDataStore.prototype.find = function(type, id) {
   if (!this.graph[type] || !this.graph[type][id]) return null;
   return this.graph[type][id];
 };
 
-JsonApiDataStore.prototype.destroy = function(model) {
-  delete this.graph[model._type][model.id];
+/**
+ * Empty the store.
+ * @method reset
+ */
+JsonApiDataStore.prototype.reset = function() {
+  this.graph = {};
 };
 
 JsonApiDataStore.prototype.initModel = function(type, id) {
@@ -64,6 +86,12 @@ JsonApiDataStore.prototype.syncRecord = function(rec) {
   return model;
 };
 
+/**
+ * Sync a JSONAPI-compliant payload with the store.
+ * @method sync
+ * @param {object} data The JSONAPI payload
+ * @return {object} The models corresponding to the primary resources of the payload.
+ */
 JsonApiDataStore.prototype.sync = function(data) {
   var self = this;
   function sync(data) {

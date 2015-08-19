@@ -6,7 +6,8 @@ var gulp = require('gulp'),
     wrap = require('gulp-wrap'),
     beautify = require('gulp-jsbeautify'),
     jshint = require('gulp-jshint'),
-    jscs = require('gulp-jscs');
+    jscs = require('gulp-jscs'),
+    markdox = require('gulp-markdox');
 
 var SRC = 'src/jsonapi-datastore/*.js',
     DEST = 'dist/';
@@ -47,4 +48,11 @@ gulp.task('jshint', function() {
     .pipe(jshint.reporter('default'));
 });
 
-gulp.task('default', ['build', 'build-angular']);
+gulp.task('doc', function() {
+  return gulp.src(SRC)
+    .pipe(markdox())
+    .pipe(concat("DOCUMENTATION.md"))
+    .pipe(gulp.dest('.'));
+});
+
+gulp.task('default', ['test', 'build', 'build-angular', 'doc']);
