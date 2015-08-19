@@ -42,12 +42,11 @@ console.log(article.serialize());
 
 ## Examples
 
-Starting by creating a store:
 ```javascript
+// Create a store:
 var store = new JsonApiDataStore();
-```
-and given the following payload, containing two `articles`, with a related `user` who is the author of both:
-```javascript
+
+// Then, given the following payload, containing two `articles`, with a related `user` who is the author of both:
 var payload = {
   data: [{
     type: 'article',
@@ -79,24 +78,20 @@ var payload = {
     }
   }]
 };
-```
-we can sync it:
-```javascript
-var articles = store.sync(payload);
-```
-which will return the list of synced articles.
 
-Later, we can retrieve one of those:
-```javascript
+// we can sync it:
+var articles = store.sync(payload);
+
+// which will return the list of synced articles.
+
+// Later, we can retrieve one of those:
 var article = store.find('article', 1337);
-```
-If the author resource has not been synced yet, we can only access its id:
-```javascript
+
+// If the author resource has not been synced yet, we can only access its id and its type:
 console.log(article.author);
-// { id: 1 }
-```
-If we do sync the author resource later:
-```javascript
+// { id: 1, _type: 'article' }
+
+// If we do sync the author resource later:
 var authorPayload = {
   data: {
     type: 'user',
@@ -108,19 +103,15 @@ var authorPayload = {
 };
 
 store.sync(authorPayload);
-```
-we can then access the author's name through our old `article` reference:
-```javascript
+
+// we can then access the author's name through our old `article` reference:
 console.log(article.author.name);
 // 'Lucas'
-```
-We can also serialize any whole model in a JSONAPI-compliant way:
-```javascript
+
+// We can also serialize any whole model in a JSONAPI-compliant way:
 console.log(article.serialize());
 // ...
-```
-or just a subset of its attributes/relationships:
-```javascript
+// or just a subset of its attributes/relationships:
 console.log(article.serialize({ attributes: ['title'], relationships: []}));
 // ...
 ```
