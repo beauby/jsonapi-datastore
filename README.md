@@ -3,7 +3,7 @@
 
 JavaScript client-side [JSON API](http://jsonapi.org) data handling made easy.
 
-Current version is v0.2.0-alpha. It is still a work in progress, but should do what it says.
+Current version is v0.3.0-beta. It is still a work in progress, but should do what it says.
 
 ## Description
 
@@ -22,9 +22,13 @@ What it does not do:
 
 ## Installing
 
-Install jsonapi-datastore by running:
+Install jsonapi-datastore with `bower` by running:
 ```
 $ bower install jsonapi-datastore
+```
+or with `npm` by running:
+```
+$ npm install jsonapi-datastore
 ```
 
 ## Parsing data
