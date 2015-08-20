@@ -89,7 +89,7 @@ Sync a JSONAPI-compliant payload with the store.
 
 ### Return:
 
-* **object** The models corresponding to the primary resources of the payload.
+* **object** The model/array of models corresponding to the payload's primary resource(s).
 
 <!-- End src/jsonapi-datastore/store.js -->
 

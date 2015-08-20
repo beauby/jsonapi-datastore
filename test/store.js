@@ -151,13 +151,13 @@ describe('JsonApiDataStore', function() {
                 }
               }
             },
-            included: {
+            included: [{
               type: 'user',
               id: 1,
               attributes: {
                 name: 'Lucas'
               }
-            }
+            }]
           };
 
       it('should create and link the related model', function() {

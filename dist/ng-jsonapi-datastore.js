@@ -181,21 +181,14 @@ angular
      * Sync a JSONAPI-compliant payload with the store.
      * @method sync
      * @param {object} data The JSONAPI payload
-     * @return {object} The models corresponding to the primary resources of the payload.
+     * @return {object} The model/array of models corresponding to the payload's primary resource(s).
      */
     JsonApiDataStore.prototype.sync = function(data) {
-      var self = this;
-
-      function sync(data) {
-        if (!data) return null;
-        if (data.constructor === Array) {
-          return data.map(self.syncRecord.bind(self));
-        } else {
-          return self.syncRecord(data);
-        }
-      }
-      sync(data.included);
-      return sync(data.data);
+      var primary = data.data,
+        syncRecord = this.syncRecord.bind(this);
+      if (!primary) return [];
+      if (data.included) data.included.map(syncRecord);
+      return (primary.constructor === Array) ? primary.map(syncRecord) : syncRecord(primary);
     };
 
     return {
