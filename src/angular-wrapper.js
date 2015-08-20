@@ -1,9 +1,11 @@
-angular
-  .module('beauby.jsonApiDataStore', [])
-  .factory('JsonApiDataStore', function() {
-    <%= contents %>
-    return {
-      store: new JsonApiDataStore(),
-      Model: JsonApiDataStoreModel
-    };
-  });
+(function() {
+  angular
+    .module('beauby.jsonApiDataStore', [])
+    .factory('JsonApiDataStore', function() {
+      return {
+        store: new JsonApiDataStore(),
+        Model: JsonApiDataStoreModel
+      };
+    });
+  <%= contents %>
+}();

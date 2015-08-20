@@ -32,6 +32,17 @@ gulp.task('build-angular', ['build'], function() {
     .pipe(gulp.dest(DEST));
 });
 
+gulp.task('build-node', ['build'], function() {
+  return gulp.src('dist/jsonapi-datastore.js')
+    .pipe(concat('node-jsonapi-datastore.js'))
+    .pipe(wrap({ src: 'src/node-wrapper.js' }))
+    .pipe(beautify({ indent_size: 2 }))
+    .pipe(gulp.dest(DEST))
+    .pipe(uglify())
+    .pipe(rename({ extname: '.min.js' }))
+    .pipe(gulp.dest(DEST));
+});
+
 gulp.task('test', ['build'], function() {
   gulp.src('test/*.js')
     .pipe(mocha());
@@ -55,4 +66,4 @@ gulp.task('doc', function() {
     .pipe(gulp.dest('.'));
 });
 
-gulp.task('default', ['test', 'build', 'build-angular', 'doc']);
+gulp.task('default', ['test', 'build', 'build-angular', 'build-node', 'doc']);

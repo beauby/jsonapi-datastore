@@ -1,6 +1,12 @@
-angular
-  .module('beauby.jsonApiDataStore', [])
-  .factory('JsonApiDataStore', function() {
+(function() {
+    angular
+      .module('beauby.jsonApiDataStore', [])
+      .factory('JsonApiDataStore', function() {
+        return {
+          store: new JsonApiDataStore(),
+          Model: JsonApiDataStoreModel
+        };
+      });
     /**
      * @class JsonApiDataStoreModel
      */
@@ -191,8 +197,4 @@ angular
       return (primary.constructor === Array) ? primary.map(syncRecord) : syncRecord(primary);
     };
 
-    return {
-      store: new JsonApiDataStore(),
-      Model: JsonApiDataStoreModel
-    };
-  });
+  }();

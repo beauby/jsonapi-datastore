@@ -2,7 +2,7 @@
   "name": "jsonapi-datastore",
   "version": "0.2.0-alpha",
   "description": "JavaScript client-side JSON API data handling made easy.",
-  "main": "dist/jsonapi-datastore.js",
+  "main": "dist/node-jsonapi-datastore.js",
   "files": [
     "dist/"
   ],
