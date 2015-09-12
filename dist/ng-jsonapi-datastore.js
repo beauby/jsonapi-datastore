@@ -128,7 +128,7 @@
 
   /**
    * Retrieve all models by type.
-   * @method find
+   * @method findAll
    * @param {string} type The type of the model.
    * @return {object} Array of the corresponding model if present, and empty array otherwise.
    */

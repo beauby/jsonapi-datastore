@@ -75,7 +75,7 @@ Retrieve a model by type and id. Constant-time lookup.
 
 * **object** The corresponding model if present, and null otherwise.
 
-## find(type)
+## findAll(type)
 
 Retrieve all models by type.
 
