@@ -233,10 +233,16 @@ describe('JsonApiDataStore', function() {
   describe('.find()', function() {
     var store = new JsonApiDataStore(),
         payload = {
-          data: {
-            type: 'article',
-            id: 1337
-          }
+          data: [
+            {
+              type: 'article',
+              id: 1337
+            },
+            {
+              type: 'article',
+              id: 1338
+            }
+          ]
         };
 
     it('should find an existing model', function() {
@@ -249,6 +255,42 @@ describe('JsonApiDataStore', function() {
       store.sync(payload);
       var article = store.find('article', 9999);
       expect(article).to.eq(null);
+    });
+
+    it('should not find a non-existing model type', function() {
+      store.sync(payload);
+      var article = store.find('bad', 1337);
+      expect(article).to.eq(null);
+    });
+  });
+
+  describe('.findAll()', function() {
+    var store = new JsonApiDataStore(),
+        payload = {
+          data: [
+            {
+              type: 'article',
+              id: 1337
+            },
+            {
+              type: 'article',
+              id: 1338
+            }
+          ]
+        };
+
+    it('should find all existing models', function() {
+      store.sync(payload);
+      var articles = store.findAll('article');
+      expect(articles.length).to.eq(2);
+      expect(articles[0].id).to.eq(1337);
+      expect(articles[1].id).to.eq(1338);
+    });
+
+    it('should not find a non-existing model', function() {
+      store.sync(payload);
+      var articles = store.findAll('bad');
+      expect(articles.length).to.eq(0);
     });
   });
 

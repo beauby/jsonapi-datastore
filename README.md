@@ -46,6 +46,10 @@ Just call the `.find(type, id)` method of your store.
 ```javascript
 var article = store.find('article', 123);
 ```
+or call the `.findAll(type)` method of your store to get all the models of that type.
+```javascript
+var articles = store.findAll('article');
+```
 All the attributes *and* relationships are accessible through the model as object properties.
 ```javascript
 console.log(article.author.name);
