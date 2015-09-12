@@ -75,6 +75,18 @@ Retrieve a model by type and id. Constant-time lookup.
 
 * **object** The corresponding model if present, and null otherwise.
 
+## findAll(type)
+
+Retrieve all models by type.
+
+### Params:
+
+* **string** *type* The type of the model.
+
+### Return:
+
+* **object** Array of the corresponding model if present, and empty array otherwise.
+
 ## reset()
 
 Empty the store.

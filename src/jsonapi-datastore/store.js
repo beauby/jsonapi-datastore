@@ -30,6 +30,19 @@ JsonApiDataStore.prototype.find = function(type, id) {
 };
 
 /**
+ * Retrieve all models by type.
+ * @method findAll
+ * @param {string} type The type of the model.
+ * @return {object} Array of the corresponding model if present, and empty array otherwise.
+ */
+JsonApiDataStore.prototype.findAll = function(type) {
+  var self = this;
+
+  if (!this.graph[type]) return [];
+  return Object.keys(self.graph[type]).map(function(v) { return self.graph[type][v]; });
+};
+
+/**
  * Empty the store.
  * @method reset
  */
