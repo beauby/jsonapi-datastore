@@ -1,15 +1,13 @@
-(function() {
-  /**
-   * @class JsonApiDataStoreModel
-   */
+/**
+ * @class JsonApiDataStoreModel
+ */
+ class JsonApiDataStoreModel {
   /**
    * @method constructor
    * @param {string} type The type of the model.
    * @param {string} id The id of the model.
    */
-  "use strict";
-
-  function JsonApiDataStoreModel(type, id) {
+  constructor(type, id) {
     this.id = id;
     this._type = type;
     this._attributes = [];
@@ -25,14 +23,10 @@
    *  - `{array=}` `relationships` The list of relationships to be serialized (default: all relationships).
    * @return {object} JSONAPI-compliant object
    */
-  JsonApiDataStoreModel.prototype.serialize = function(opts) {
+  serialize(opts) {
     var self = this,
-      res = {
-        data: {
-          type: this._type
-        }
-      },
-      key;
+        res = { data: { type: this._type } },
+        key;
 
     opts = opts || {};
     opts.attributes = opts.attributes || this._attributes;
@@ -48,10 +42,7 @@
 
     opts.relationships.forEach(function(key) {
       function relationshipIdentifier(model) {
-        return {
-          type: model._type,
-          id: model.id
-        };
+        return { type: model._type, id: model.id };
       }
       if (self[key].constructor === Array) {
         res.data.relationships[key] = {
@@ -65,7 +56,7 @@
     });
 
     return res;
-  };
+  }
 
   /**
    * Set/add an attribute to a model.
@@ -73,10 +64,10 @@
    * @param {string} attrName The name of the attribute.
    * @param {object} value The value of the attribute.
    */
-  JsonApiDataStoreModel.prototype.setAttribute = function(attrName, value) {
+  setAttribute(attrName, value) {
     if (this[attrName] === undefined) this._attributes.push(attrName);
     this[attrName] = value;
-  };
+  }
 
   /**
    * Set/add a relationships to a model.
@@ -84,18 +75,20 @@
    * @param {string} relName The name of the relationship.
    * @param {object} models The linked model(s).
    */
-  JsonApiDataStoreModel.prototype.setRelationship = function(relName, models) {
+  setRelationship(relName, models) {
     if (this[relName] === undefined) this._relationships.push(relName);
     this[relName] = models;
-  };
+  }
+}
 
-  /**
-   * @class JsonApiDataStore
-   */
+/**
+ * @class JsonApiDataStore
+ */
+class JsonApiDataStore {
   /**
    * @method constructor
    */
-  function JsonApiDataStore() {
+  constructor() {
     this.graph = {};
   }
 
@@ -104,9 +97,9 @@
    * @method destroy
    * @param {object} model The model to destroy.
    */
-  JsonApiDataStore.prototype.destroy = function(model) {
+  destroy(model) {
     delete this.graph[model._type][model.id];
-  };
+  }
 
   /**
    * Retrieve a model by type and id. Constant-time lookup.
@@ -115,30 +108,43 @@
    * @param {string} id The id of the model.
    * @return {object} The corresponding model if present, and null otherwise.
    */
-  JsonApiDataStore.prototype.find = function(type, id) {
+  find(type, id) {
     if (!this.graph[type] || !this.graph[type][id]) return null;
     return this.graph[type][id];
-  };
+  }
+
+  /**
+   * Retrieve all models by type.
+   * @method findAll
+   * @param {string} type The type of the model.
+   * @return {object} Array of the corresponding model if present, and empty array otherwise.
+   */
+  findAll(type) {
+    var self = this;
+
+    if (!this.graph[type]) return [];
+    return Object.keys(self.graph[type]).map(function(v) { return self.graph[type][v]; });
+  }
 
   /**
    * Empty the store.
    * @method reset
    */
-  JsonApiDataStore.prototype.reset = function() {
+  reset() {
     this.graph = {};
-  };
+  }
 
-  JsonApiDataStore.prototype.initModel = function(type, id) {
+  initModel(type, id) {
     this.graph[type] = this.graph[type] || {};
     this.graph[type][id] = this.graph[type][id] || new JsonApiDataStoreModel(type, id);
 
     return this.graph[type][id];
-  };
+  }
 
-  JsonApiDataStore.prototype.syncRecord = function(rec) {
+  syncRecord(rec) {
     var self = this,
-      model = this.initModel(rec.type, rec.id),
-      key;
+        model = this.initModel(rec.type, rec.id),
+        key;
 
     function findOrInit(resource) {
       if (!self.find(resource.type, resource.id)) {
@@ -175,7 +181,7 @@
     }
 
     return model;
-  };
+  }
 
   /**
    * Sync a JSONAPI-compliant payload with the store.
@@ -183,14 +189,16 @@
    * @param {object} data The JSONAPI payload
    * @return {object} The model/array of models corresponding to the payload's primary resource(s).
    */
-  JsonApiDataStore.prototype.sync = function(data) {
+  sync(data) {
     var primary = data.data,
-      syncRecord = this.syncRecord.bind(this);
+        syncRecord = this.syncRecord.bind(this);
     if (!primary) return [];
     if (data.included) data.included.map(syncRecord);
-    return primary.constructor === Array ? primary.map(syncRecord) : syncRecord(primary);
-  };
+    return (primary.constructor === Array) ? primary.map(syncRecord) : syncRecord(primary);
+  }
+}
 
-  exports.JsonApiDataStore = JsonApiDataStore;
-  exports.JsonApiDataStoreModel = JsonApiDataStoreModel;
-})();
+module.exports = {
+  JsonApiDataStore: JsonApiDataStore,
+  JsonApiDataStoreModel: JsonApiDataStoreModel
+};

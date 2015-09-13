@@ -15,6 +15,8 @@
    * @param {string} type The type of the model.
    * @param {string} id The id of the model.
    */
+  "use strict";
+
   function JsonApiDataStoreModel(type, id) {
     this.id = id;
     this._type = type;
@@ -194,7 +196,6 @@
       syncRecord = this.syncRecord.bind(this);
     if (!primary) return [];
     if (data.included) data.included.map(syncRecord);
-    return (primary.constructor === Array) ? primary.map(syncRecord) : syncRecord(primary);
+    return primary.constructor === Array ? primary.map(syncRecord) : syncRecord(primary);
   };
-
 })();
