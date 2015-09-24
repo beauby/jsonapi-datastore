@@ -1,4 +1,6 @@
 var gulp = require('gulp'),
+    gulpbabel = require('gulp-babel'),
+    babel = require('babel/register');
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
@@ -14,6 +16,7 @@ var SRC = 'src/jsonapi-datastore/*.js',
 
 gulp.task('build', ['jshint', 'jscs'], function() {
   return gulp.src(SRC)
+    .pipe(gulpbabel())
     .pipe(concat('jsonapi-datastore.js'))
     .pipe(gulp.dest(DEST))
     .pipe(uglify())
@@ -23,6 +26,7 @@ gulp.task('build', ['jshint', 'jscs'], function() {
 
 gulp.task('build-angular', ['build'], function() {
   return gulp.src('dist/jsonapi-datastore.js')
+    .pipe(gulpbabel())
     .pipe(concat('ng-jsonapi-datastore.js'))
     .pipe(wrap({ src: 'src/angular-wrapper.js' }))
     .pipe(beautify({ indent_size: 2 }))
@@ -34,6 +38,7 @@ gulp.task('build-angular', ['build'], function() {
 
 gulp.task('build-node', ['build'], function() {
   return gulp.src('dist/jsonapi-datastore.js')
+    .pipe(gulpbabel())
     .pipe(concat('node-jsonapi-datastore.js'))
     .pipe(wrap({ src: 'src/node-wrapper.js' }))
     .pipe(beautify({ indent_size: 2 }))
@@ -44,23 +49,27 @@ gulp.task('build-node', ['build'], function() {
 });
 
 gulp.task('test', ['build'], function() {
-  gulp.src('test/*.js')
-    .pipe(mocha());
+  gulp.src('test/*.spec.js')
+    .pipe(gulpbabel())
+    .pipe(mocha({compilers: { js: babel }}));
 });
 
 gulp.task('jscs', function() {
   return gulp.src(SRC)
+    .pipe(gulpbabel())
     .pipe(jscs());
 });
 
 gulp.task('jshint', function() {
   return gulp.src(SRC)
+    .pipe(gulpbabel())
     .pipe(jshint())
     .pipe(jshint.reporter('default'));
 });
 
 gulp.task('doc', function() {
   return gulp.src(SRC)
+    .pipe(gulpbabel())
     .pipe(markdox())
     .pipe(concat("DOCUMENTATION.md"))
     .pipe(gulp.dest('.'));
