@@ -84,6 +84,18 @@ Retrieve all models by type.
 
 Empty the store.
 
+## syncWithMeta(data)
+
+Sync a JSONAPI-compliant payload with the store and return any metadata included in the payload
+
+### Params:
+
+* **object** *data* The JSONAPI payload
+
+### Return:
+
+* **object** The model/array of models corresponding to the payload's primary resource(s) and any metadata.
+
 ## sync(data)
 
 Sync a JSONAPI-compliant payload with the store.

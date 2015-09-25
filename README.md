@@ -3,7 +3,7 @@
 
 JavaScript client-side [JSON API](http://jsonapi.org) data handling made easy.
 
-Current version is v0.3.1-beta. It is still a work in progress, but should do what it says.
+Current version is v0.3.2-beta. It is still a work in progress, but should do what it says.
 
 ## Description
 
@@ -39,6 +39,15 @@ var store = new JsonApiDataStore();
 store.sync(data);
 ```
 This parses the data and incorporates it in the store, taking care of already existing records (by updating them) and relationships.
+
+## Parsing with meta data
+
+If you have meta data in your payload use the `.syncWithMeta` method of your store.
+```javascript
+var store = new JsonApiDataStore();
+store.syncWithMeta(data);
+```
+This does everything that `.sync()` does, but returns an object with data and meta split.
 
 ## Retrieving models
 
@@ -145,7 +154,7 @@ See [DOCUMENTATION.md](DOCUMENTATION.md).
 
 ## What's missing
 
-Currently, the store does not handle `links` and `meta` attributes.
+Currently, the store does not handle `links` attributes or resource-level or relationship-level meta.
 
 ## Notes
 
