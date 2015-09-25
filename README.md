@@ -40,6 +40,17 @@ store.sync(data);
 ```
 This parses the data and incorporates it in the store, taking care of already existing records (by updating them) and relationships.
 
+## Parsing with meta data
+
+If you have meta data in your payload use the `.syncWithMeta` method of your store.
+```javascript
+var store = new JsonApiDataStore();
+store.syncWithMeta(data);
+```
+This does everything that `.sync()` does, but returns an object with data and meta split.
+
+If your payload uses something other than `meta` as the key for your meta data you can set that key using the `setMetaKey()` method of your store
+
 ## Retrieving models
 
 Just call the `.find(type, id)` method of your store.
@@ -145,7 +156,7 @@ See [DOCUMENTATION.md](DOCUMENTATION.md).
 
 ## What's missing
 
-Currently, the store does not handle `links` and `meta` attributes.
+Currently, the store does not handle `links` attributes.
 
 ## Notes
 

@@ -47,6 +47,12 @@ Set/add a relationships to a model.
 
 ## constructor()
 
+## setMetaKey(metaKey)
+
+### Params:
+
+* **string** *metaKey* The key to use to pull meta data from the JSONAPI-compliant payload
+
 ## destroy(model)
 
 Remove a model from the store.
@@ -83,6 +89,18 @@ Retrieve all models by type.
 ## reset()
 
 Empty the store.
+
+## syncWithMeta(data)
+
+Sync a JSONAPI-compliant payload with the store and return any metadata included in the payload
+
+### Params:
+
+* **object** *data* The JSONAPI payload
+
+### Return:
+
+* **object** The model/array of models corresponding to the payload's primary resource(s) and any metadata.
 
 ## sync(data)
 

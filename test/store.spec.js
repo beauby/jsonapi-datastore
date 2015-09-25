@@ -208,6 +208,77 @@ describe('JsonApiDataStore', () => {
     });
   });
 
+  describe('.syncWithMeta()', () => {
+    context('when given a simple payload with meta', () => {
+      var store = new JsonApiDataStore(),
+          payload = {
+            data: {
+              type: 'article',
+              id: 1337
+            },
+            meta: {
+              test: 'abc'
+            }
+          };
+
+      it('should return the meta data', () => {
+        var result = store.syncWithMeta(payload);
+        expect(result.meta.test).to.eq('abc');
+      });
+
+      it('should return the data', () => {
+        var result = store.syncWithMeta(payload);
+        expect(result.data.id).to.eq(1337);
+        expect(result.data._type).to.eq('article');
+      });
+    });
+
+    context('when given a simple payload without meta', () => {
+      var store = new JsonApiDataStore(),
+          payload = {
+            data: {
+              type: 'article',
+              id: 1337
+            }
+          };
+
+      it('should return empty meta data', () => {
+        var result = store.syncWithMeta(payload);
+        expect(result.meta).to.deep.eq({});
+      });
+
+      it('should return the data', () => {
+        var result = store.syncWithMeta(payload);
+        expect(result.data.id).to.eq(1337);
+        expect(result.data._type).to.eq('article');
+      });
+
+      context('when given a simple payload with meta as different key', () => {
+        var store = new JsonApiDataStore(),
+            payload = {
+              data: {
+                type: 'article',
+                id: 1337
+              },
+              metadata: {
+                test: 'abc'
+              }
+            };
+
+        it('should return empty meta data when not setting meta key', () => {
+          var result = store.syncWithMeta(payload);
+          expect(result.meta).to.deep.eq({});
+        });
+
+        it('should return meta data when setting correct meta key', () => {
+          store.setMetaKey('metadata');
+          var result = store.syncWithMeta(payload);
+          expect(result.meta.test).to.eq('abc');
+        });
+      });
+    });
+  });
+
   describe('.reset()', () => {
     var store = new JsonApiDataStore(),
         payload = {

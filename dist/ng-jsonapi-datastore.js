@@ -148,15 +148,26 @@
       _classCallCheck(this, JsonApiDataStore);
 
       this.graph = {};
+      this.metaKey = "meta";
     }
 
     /**
-     * Remove a model from the store.
-     * @method destroy
-     * @param {object} model The model to destroy.
+     * @method setMetaKey
+     * @param {string} metaKey The key to use to pull meta data from the JSONAPI-compliant payload
      */
 
     _createClass(JsonApiDataStore, [{
+      key: "setMetaKey",
+      value: function setMetaKey(metaKey) {
+        this.metaKey = metaKey;
+      }
+
+      /**
+       * Remove a model from the store.
+       * @method destroy
+       * @param {object} model The model to destroy.
+       */
+    }, {
       key: "destroy",
       value: function destroy(model) {
         delete this.graph[model._type][model.id];
@@ -255,6 +266,25 @@
       }
 
       /**
+       * Sync a JSONAPI-compliant payload with the store and return any metadata included in the payload
+       * @method syncWithMeta
+       * @param {object} data The JSONAPI payload
+       * @return {object} The model/array of models corresponding to the payload's primary resource(s) and any metadata.
+       */
+    }, {
+      key: "syncWithMeta",
+      value: function syncWithMeta(payload) {
+        var primary = payload.data,
+          syncRecord = this.syncRecord.bind(this);
+        if (!primary) return [];
+        if (payload.included) payload.included.map(syncRecord);
+        return {
+          data: primary.constructor === Array ? primary.map(syncRecord) : syncRecord(primary),
+          meta: this.metaKey in payload ? payload[this.metaKey] : {}
+        };
+      }
+
+      /**
        * Sync a JSONAPI-compliant payload with the store.
        * @method sync
        * @param {object} data The JSONAPI payload
@@ -262,12 +292,8 @@
        */
     }, {
       key: "sync",
-      value: function sync(data) {
-        var primary = data.data,
-          syncRecord = this.syncRecord.bind(this);
-        if (!primary) return [];
-        if (data.included) data.included.map(syncRecord);
-        return primary.constructor === Array ? primary.map(syncRecord) : syncRecord(primary);
+      value: function sync(payload) {
+        return this.syncWithMeta(payload).data;
       }
     }]);
 
