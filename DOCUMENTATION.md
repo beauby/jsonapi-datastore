@@ -1,6 +1,6 @@
 
 
-<!-- Start src/jsonapi-datastore/model.js -->
+<!-- Start src/jsonapi-datastore.js -->
 
 ## JsonApiDataStoreModel
 
@@ -42,13 +42,6 @@ Set/add a relationships to a model.
 
 * **string** *relName* The name of the relationship.
 * **object** *models* The linked model(s).
-
-<!-- End src/jsonapi-datastore/model.js -->
-
-
-
-
-<!-- Start src/jsonapi-datastore/store.js -->
 
 ## JsonApiDataStore
 
@@ -103,5 +96,5 @@ Sync a JSONAPI-compliant payload with the store.
 
 * **object** The model/array of models corresponding to the payload's primary resource(s).
 
-<!-- End src/jsonapi-datastore/store.js -->
+<!-- End src/jsonapi-datastore.js -->
 
