@@ -1,11 +1,11 @@
 var fs = require('fs'),
     expect = require('chai').expect;
 
-eval(fs.readFileSync('dist/jsonapi-datastore.js', 'utf-8'));
+import {JsonApiDataStore} from '../src/jsonapi-datastore.js';
 
-describe('JsonApiDataStore', function() {
-  describe('.sync()', function() {
-    context('when given a simple payload', function() {
+describe('JsonApiDataStore', () => {
+  describe('.sync()', () => {
+    context('when given a simple payload', () => {
       var store = new JsonApiDataStore(),
           payload = {
             data: {
@@ -14,28 +14,28 @@ describe('JsonApiDataStore', function() {
             }
           };
 
-      it('should set the id', function() {
+      it('should set the id', () => {
         var article = store.sync(payload);
         expect(article.id).to.eq(1337);
       });
 
-      it('should set the _type', function() {
+      it('should set the _type', () => {
         var article = store.sync(payload);
         expect(article._type).to.eq('article');
       });
 
-      it('should set an empty _relationships', function() {
+      it('should set an empty _relationships', () => {
         var article = store.sync(payload);
         expect(article._relationships).to.deep.eq([]);
       });
 
-      it('should set an empty _attributes', function() {
+      it('should set an empty _attributes', () => {
         var article = store.sync(payload);
         expect(article._relationships).to.deep.eq([]);
       });
     });
 
-    context('when given a payload with simple attributes', function() {
+    context('when given a payload with simple attributes', () => {
       var store = new JsonApiDataStore(),
           payload = {
             data: {
@@ -48,14 +48,14 @@ describe('JsonApiDataStore', function() {
             }
           };
 
-      it('should set the attributes', function() {
+      it('should set the attributes', () => {
         var article = store.sync(payload);
         expect(article.title).to.eq('Cool article');
         expect(article.author).to.eq('Lucas');
       });
     });
 
-    context('when given a payload with multiple resources', function() {
+    context('when given a payload with multiple resources', () => {
       var store = new JsonApiDataStore(),
           payload = {
             data: [{
@@ -75,13 +75,13 @@ describe('JsonApiDataStore', function() {
             }]
           };
 
-      it('should create as many models', function() {
+      it('should create as many models', () => {
         var articles = store.sync(payload);
         expect(articles.length).to.eq(2);
       });
     });
 
-    context('when given a payload with relationships', function() {
+    context('when given a payload with relationships', () => {
       var store = new JsonApiDataStore(),
           payload = {
             data: {
@@ -101,14 +101,14 @@ describe('JsonApiDataStore', function() {
             }
           };
 
-      it('should create placeholder models for related resources', function() {
+      it('should create placeholder models for related resources', () => {
         var article = store.sync(payload);
         expect(article.author._type).to.eq('user');
         expect(article.author.id).to.eq(1);
         expect(article.author._placeHolder).to.eq(true);
       });
 
-      context('when syncing related resources later', function() {
+      context('when syncing related resources later', () => {
         var authorPayload = {
           data: {
             type: 'user',
@@ -119,13 +119,13 @@ describe('JsonApiDataStore', function() {
           }
         };
 
-        it('should update relationships', function() {
+        it('should update relationships', () => {
           var article = store.sync(payload);
           store.sync(authorPayload);
           expect(article.author.name).to.eq('Lucas');
         });
 
-        it('should remove the _placeHolder flag', function() {
+        it('should remove the _placeHolder flag', () => {
           var article = store.sync(payload);
           store.sync(authorPayload);
           expect(article.author._placeHolder).not.to.eq(true);
@@ -133,7 +133,7 @@ describe('JsonApiDataStore', function() {
       });
     });
 
-    context('when given a payload with included relationships', function() {
+    context('when given a payload with included relationships', () => {
       var store = new JsonApiDataStore(),
           payload = {
             data: {
@@ -160,13 +160,13 @@ describe('JsonApiDataStore', function() {
             }]
           };
 
-      it('should create and link the related model', function() {
+      it('should create and link the related model', () => {
         var article = store.sync(payload);
         expect(article.author.name).to.eq('Lucas');
       });
     });
 
-    context('when given a payload with mutual references', function() {
+    context('when given a payload with mutual references', () => {
       var store = new JsonApiDataStore(),
           payload = {
             data: [{
@@ -200,7 +200,7 @@ describe('JsonApiDataStore', function() {
             }]
           };
 
-      it('should create and link both models', function() {
+      it('should create and link both models', () => {
         var articles = store.sync(payload);
         expect(articles[0].related_article.id).to.eq(1338);
         expect(articles[1].related_article.id).to.eq(1337);
@@ -208,7 +208,7 @@ describe('JsonApiDataStore', function() {
     });
   });
 
-  describe('.reset()', function() {
+  describe('.reset()', () => {
     var store = new JsonApiDataStore(),
         payload = {
           data: {
@@ -217,20 +217,20 @@ describe('JsonApiDataStore', function() {
           }
         };
 
-    it('should empty the store', function() {
+    it('should empty the store', () => {
       store.sync(payload);
       store.reset();
       expect(store.graph).to.deep.eq({});
     });
 
-    it('should not invalidate previous references', function() {
+    it('should not invalidate previous references', () => {
       var article = store.sync(payload);
       store.reset();
       expect(article.id).to.eq(1337);
     });
   });
 
-  describe('.find()', function() {
+  describe('.find()', () => {
     var store = new JsonApiDataStore(),
         payload = {
           data: [
@@ -245,26 +245,26 @@ describe('JsonApiDataStore', function() {
           ]
         };
 
-    it('should find an existing model', function() {
+    it('should find an existing model', () => {
       store.sync(payload);
       var article = store.find('article', 1337);
       expect(article.id).to.eq(1337);
     });
 
-    it('should not find a non-existing model', function() {
+    it('should not find a non-existing model', () => {
       store.sync(payload);
       var article = store.find('article', 9999);
       expect(article).to.eq(null);
     });
 
-    it('should not find a non-existing model type', function() {
+    it('should not find a non-existing model type', () => {
       store.sync(payload);
       var article = store.find('bad', 1337);
       expect(article).to.eq(null);
     });
   });
 
-  describe('.findAll()', function() {
+  describe('.findAll()', () => {
     var store = new JsonApiDataStore(),
         payload = {
           data: [
@@ -279,7 +279,7 @@ describe('JsonApiDataStore', function() {
           ]
         };
 
-    it('should find all existing models', function() {
+    it('should find all existing models', () => {
       store.sync(payload);
       var articles = store.findAll('article');
       expect(articles.length).to.eq(2);
@@ -287,14 +287,14 @@ describe('JsonApiDataStore', function() {
       expect(articles[1].id).to.eq(1338);
     });
 
-    it('should not find a non-existing model', function() {
+    it('should not find a non-existing model', () => {
       store.sync(payload);
       var articles = store.findAll('bad');
       expect(articles.length).to.eq(0);
     });
   });
 
-  describe('.destroy()', function() {
+  describe('.destroy()', () => {
     var store = new JsonApiDataStore(),
         payload = {
           data: {
@@ -303,7 +303,7 @@ describe('JsonApiDataStore', function() {
           }
         };
 
-    it('should destroy an existing model', function() {
+    it('should destroy an existing model', () => {
       store.sync(payload);
       store.destroy(store.find('article', 1337));
       var article = store.find('article', 1337);
