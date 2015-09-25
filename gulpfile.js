@@ -11,7 +11,7 @@ var gulp = require('gulp'),
     jscs = require('gulp-jscs'),
     markdox = require('gulp-markdox');
 
-var SRC = 'src/jsonapi-datastore/*.js',
+var SRC = 'src/jsonapi-datastore.js',
     DEST = 'dist/';
 
 gulp.task('build', ['jshint', 'jscs'], function() {
