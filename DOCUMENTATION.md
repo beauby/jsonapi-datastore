@@ -47,12 +47,6 @@ Set/add a relationships to a model.
 
 ## constructor()
 
-## setMetaKey(metaKey)
-
-### Params:
-
-* **string** *metaKey* The key to use to pull meta data from the JSONAPI-compliant payload
-
 ## destroy(model)
 
 Remove a model from the store.

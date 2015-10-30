@@ -244,7 +244,7 @@ describe('JsonApiDataStore', () => {
 
       it('should return empty meta data', () => {
         var result = store.syncWithMeta(payload);
-        expect(result.meta).to.deep.eq({});
+        expect(result.meta).to.deep.eq(null);
       });
 
       it('should return the data', () => {
@@ -267,14 +267,9 @@ describe('JsonApiDataStore', () => {
 
         it('should return empty meta data when not setting meta key', () => {
           var result = store.syncWithMeta(payload);
-          expect(result.meta).to.deep.eq({});
+          expect(result.meta).to.deep.eq(null);
         });
 
-        it('should return meta data when setting correct meta key', () => {
-          store.setMetaKey('metadata');
-          var result = store.syncWithMeta(payload);
-          expect(result.meta.test).to.eq('abc');
-        });
       });
     });
   });

@@ -113,26 +113,15 @@ var JsonApiDataStore = (function () {
     _classCallCheck(this, JsonApiDataStore);
 
     this.graph = {};
-    this.metaKey = "meta";
   }
 
   /**
-   * @method setMetaKey
-   * @param {string} metaKey The key to use to pull meta data from the JSONAPI-compliant payload
+   * Remove a model from the store.
+   * @method destroy
+   * @param {object} model The model to destroy.
    */
 
   _createClass(JsonApiDataStore, [{
-    key: "setMetaKey",
-    value: function setMetaKey(metaKey) {
-      this.metaKey = metaKey;
-    }
-
-    /**
-     * Remove a model from the store.
-     * @method destroy
-     * @param {object} model The model to destroy.
-     */
-  }, {
     key: "destroy",
     value: function destroy(model) {
       delete this.graph[model._type][model.id];
@@ -245,7 +234,7 @@ var JsonApiDataStore = (function () {
       if (payload.included) payload.included.map(syncRecord);
       return {
         data: primary.constructor === Array ? primary.map(syncRecord) : syncRecord(primary),
-        meta: this.metaKey in payload ? payload[this.metaKey] : {}
+        meta: "meta" in payload ? payload.meta : null
       };
     }
 

@@ -90,15 +90,6 @@ class JsonApiDataStore {
    */
   constructor() {
     this.graph = {};
-    this.metaKey = "meta";
-  }
-
-  /**
-   * @method setMetaKey
-   * @param {string} metaKey The key to use to pull meta data from the JSONAPI-compliant payload
-   */
-  setMetaKey(metaKey) {
-    this.metaKey = metaKey;
   }
 
   /**
@@ -205,7 +196,7 @@ class JsonApiDataStore {
     if (payload.included) payload.included.map(syncRecord);
     return {
       data: (primary.constructor === Array) ? primary.map(syncRecord) : syncRecord(primary),
-      meta: (this.metaKey in payload) ? payload[this.metaKey] : {}
+      meta: ("meta" in payload) ? payload.meta : null
     };
   }
 

@@ -49,8 +49,6 @@ store.syncWithMeta(data);
 ```
 This does everything that `.sync()` does, but returns an object with data and meta split.
 
-If your payload uses something other than `meta` as the key for your meta data you can set that key using the `setMetaKey()` method of your store
-
 ## Retrieving models
 
 Just call the `.find(type, id)` method of your store.
