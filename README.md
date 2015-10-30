@@ -3,7 +3,7 @@
 
 JavaScript client-side [JSON API](http://jsonapi.org) data handling made easy.
 
-Current version is v0.3.1-beta. It is still a work in progress, but should do what it says.
+Current version is v0.3.2-beta. It is still a work in progress, but should do what it says.
 
 ## Description
 
