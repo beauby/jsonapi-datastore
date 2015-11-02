@@ -154,7 +154,7 @@ See [DOCUMENTATION.md](DOCUMENTATION.md).
 
 ## What's missing
 
-Currently, the store does not handle `links` attributes.
+Currently, the store does not handle `links` attributes or resource-level or relationship-level meta.
 
 ## Notes
 
