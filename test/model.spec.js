@@ -112,6 +112,25 @@ describe('JsonApiDataModel', () => {
       let serializedArticle = article.serialize();
       expect(serializedArticle.data.id).to.be.undefined;
     });
+
+    it('should handle empty to-one relationships', () => {
+      let store = new JsonApiDataStore(),
+          payload = {
+            data: {
+              type: 'article',
+              id: 1337,
+              relationships: {
+                author: {
+                  data: null
+                }
+              }
+            }
+          };
+
+      let article = store.sync(payload);
+      let serializedArticle = article.serialize();
+      expect(serializedArticle.data.relationships.author.data).to.be.null;
+    });
   });
 
   describe('.setAttribute()', () => {
