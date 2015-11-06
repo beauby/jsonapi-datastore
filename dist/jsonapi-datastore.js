@@ -60,7 +60,9 @@ var JsonApiDataStoreModel = (function () {
         function relationshipIdentifier(model) {
           return { type: model._type, id: model.id };
         }
-        if (self[key].constructor === Array) {
+        if (!self[key]) {
+          res.data.relationships[key] = { data: null };
+        } else if (self[key].constructor === Array) {
           res.data.relationships[key] = {
             data: self[key].map(relationshipIdentifier)
           };
