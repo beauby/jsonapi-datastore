@@ -293,8 +293,10 @@
     return JsonApiDataStore;
   })();
 
-  module.exports = {
-    JsonApiDataStore: JsonApiDataStore,
-    JsonApiDataStoreModel: JsonApiDataStoreModel
-  };
+  if ('undefined' !== typeof module) {
+    module.exports = {
+      JsonApiDataStore: JsonApiDataStore,
+      JsonApiDataStoreModel: JsonApiDataStoreModel
+    };
+  }
 })();
