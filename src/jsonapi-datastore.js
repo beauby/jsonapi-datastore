@@ -159,7 +159,7 @@ class JsonApiDataStore {
     delete model._placeHolder;
 
     for (key in rec.attributes) {
-      if (!model._attributes.includes(key)) {
+      if (model._attributes.indexOf(key) === -1) {
         model._attributes.push(key);
       }
       model[key] = rec.attributes[key];
