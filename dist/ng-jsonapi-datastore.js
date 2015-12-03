@@ -232,7 +232,9 @@
         delete model._placeHolder;
 
         for (key in rec.attributes) {
-          model._attributes.push(key);
+          if (!model._attributes.includes(key)) {
+            model._attributes.push(key);
+          }
           model[key] = rec.attributes[key];
         }
 
