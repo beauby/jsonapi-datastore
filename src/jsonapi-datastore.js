@@ -11,6 +11,7 @@
     this.id = id;
     this._type = type;
     this._attributes = [];
+    this._associations = [];
     this._relationships = [];
   }
 
@@ -100,6 +101,17 @@ class JsonApiDataStore {
    * @param {object} model The model to destroy.
    */
   destroy(model) {
+    this.graph[model._type][model.id]._associations.map(function(assoc) {
+      if (self.graph[assoc.type][assoc.id][assoc.relation].constructor === Array) {
+        self.graph[assoc.type][assoc.id][assoc.relation].forEach(function(val, idx) {
+          if (val.id === model.id) {
+            self.graph[assoc.type][assoc.id][assoc.relation].splice(idx, 1);
+          }
+        });
+      } else if (self.graph[assoc.type][assoc.id][assoc.relation].id === model.id) {
+        self.graph[assoc.type][assoc.id][assoc.relation] = new JsonApiDataStoreModel(self.graph[assoc.type][assoc.id][assoc.relation]._type);
+      }
+    });
     delete this.graph[model._type][model.id];
   }
 
@@ -171,9 +183,16 @@ class JsonApiDataStore {
           if (rel.data === null) {
             model[key] = null;
           } else if (rel.data.constructor === Array) {
-            model[key] = rel.data.map(findOrInit);
+            model[key] = [];
+            for (var idx in rel.data) {
+              var record = findOrInit(rel.data[idx]);
+              record._associations.push({id: model.id, type: model._type, relation: key});
+              model[key].push(record);
+            }
           } else {
-            model[key] = findOrInit(rel.data);
+            var ref = findOrInit(rel.data);
+            ref._associations.push({id: model.id, type: model._type, relation: key});
+            model[key] = ref;
           }
         }
         if (rel.links) {
