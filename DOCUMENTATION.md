@@ -1,6 +1,6 @@
 
 
-<!-- Start src\jsonapi-datastore.js -->
+<!-- Start src/jsonapi-datastore.js -->
 
 ## JsonApiDataStoreModel
 
@@ -10,6 +10,25 @@
 
 * **string** *type* The type of the model.
 * **string** *id* The id of the model.
+
+## _addDependence(type, id, key)
+
+Add a dependent to a model.
+
+### Params:
+
+* **string** *type* The type of the dependent model.
+* **string** *id* The id of the dependent model.
+* **string** *key* The name of the relation found on the dependent model.
+
+## _removeDependence(type, id)
+
+Removes a dependent from a model.
+
+### Params:
+
+* **string** *type* The type of the dependent model.
+* **string** *id* The id of the dependent model.
 
 ## serialize(opts)
 
@@ -108,5 +127,5 @@ Sync a JSONAPI-compliant payload with the store.
 
 * **object** The model/array of models corresponding to the payload's primary resource(s).
 
-<!-- End src\jsonapi-datastore.js -->
+<!-- End src/jsonapi-datastore.js -->
 

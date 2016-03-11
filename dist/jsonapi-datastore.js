@@ -29,16 +29,56 @@ var JsonApiDataStoreModel = (function () {
    */
 
   /**
-   * Serialize a model.
-   * @method serialize
-   * @param {object} opts The options for serialization.  Available properties:
-   *
-   *  - `{array=}` `attributes` The list of attributes to be serialized (default: all attributes).
-   *  - `{array=}` `relationships` The list of relationships to be serialized (default: all relationships).
-   * @return {object} JSONAPI-compliant object
-   */
+   * Add a dependent to a model.
+   * @method _addDependence
+   * @param {string} type The type of the dependent model.
+   * @param {string} id The id of the dependent model.
+   * @param {string} key The name of the relation found on the dependent model.
+    */
 
   _createClass(JsonApiDataStoreModel, [{
+    key: "_addDependence",
+    value: function _addDependence(type, id, key) {
+      var self = this,
+          found;
+
+      found = self._dependents.filter(function (dependent) {
+        return dependent.id === id && dependent.type === type;
+      });
+      if (found.length === 0) {
+        self._dependents.push({ id: id, type: type, relation: key });
+      }
+    }
+
+    /**
+     * Removes a dependent from a model.
+     * @method _removeDependence
+     * @param {string} type The type of the dependent model.
+     * @param {string} id The id of the dependent model.
+      */
+  }, {
+    key: "_removeDependence",
+    value: function _removeDependence(type, id) {
+      var self = this,
+          found;
+
+      self._dependents.forEach(function (val, idx) {
+        if (val.id === id && val.type === type) {
+          self._dependents.splice(idx, 1);
+        }
+      });
+    }
+
+    /**
+     * Serialize a model.
+     * @method serialize
+     * @param {object} opts The options for serialization.  Available properties:
+     *
+     *  - `{array=}` `attributes` The list of attributes to be serialized (default: all attributes).
+     *  - `{array=}` `relationships` The list of relationships to be serialized (default: all relationships).
+     * @return {object} JSONAPI-compliant object
+     */
+  }, {
     key: "serialize",
     value: function serialize(opts) {
       var self = this,
@@ -129,14 +169,10 @@ var JsonApiDataStore = (function () {
     value: function destroy(model) {
       var self = this;
       model._dependents.forEach(function (dependent, depIdx) {
-        self.graph[dependent.type][dependent.id]._dependents.forEach(function (val, idx) {
-          if (val.id === model.id) {
-            self.graph[dependent.type][dependent.id]._dependents.splice(idx, 1);
-          }
-        });
+        self.graph[dependent.type][dependent.id]._removeDependence(model._type, model.id);
         if (self.graph[dependent.type][dependent.id][dependent.relation].constructor === Array) {
           self.graph[dependent.type][dependent.id][dependent.relation].forEach(function (val, idx) {
-            if (val.id === model.id) {
+            if (val.id === model.id && val.type === model._type) {
               self.graph[dependent.type][dependent.id][dependent.relation].splice(idx, 1);
             }
           });
@@ -225,22 +261,13 @@ var JsonApiDataStore = (function () {
             if (rel.data === null) {
               model[key] = null;
             } else if (rel.data.constructor === Array) {
-              model[key] = rel.data.map(findOrInit).map(function (record) {
-                var found = record._dependents.filter(function (dependent) {
-                  return dependent.id === model.id && dependent.type === model._type;
-                });
-                if (found.length === 0) {
-                  record._dependents.push({ id: model.id, type: model._type, relation: key });
-                }
+              model[key] = rel.data.map(findOrInit);
+              model[key].forEach(function (record, key) {
+                record._addDependence(model._type, model.id, key);
               });
             } else {
               model[key] = findOrInit(rel.data);
-              var found = model[key]._dependents.filter(function (dependent) {
-                return dependent.id === model.id && dependent.type === model._type;
-              });
-              if (found.length === 0) {
-                model[key]._dependents.push({ id: model.id, type: model._type, relation: key });
-              }
+              model[key]._addDependence(model._type, model.id, key);
             }
           }
           if (rel.links) {
