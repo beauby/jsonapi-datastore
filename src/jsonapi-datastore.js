@@ -188,9 +188,8 @@ class JsonApiDataStore {
                 record._dependents.push({id: model.id, type: model._type, relation: key});
               });
           } else {
-            var ref = findOrInit(rel.data);
-            ref._dependents.push({id: model.id, type: model._type, relation: key});
-            model[key] = ref;
+            model[key] = findOrInit(rel.data);
+            model[key]._dependents.push({id: model.id, type: model._type, relation: key});
           }
         }
         if (rel.links) {
