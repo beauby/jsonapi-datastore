@@ -40,6 +40,7 @@
       this.id = id;
       this._type = type;
       this._attributes = [];
+      this._dependents = [];
       this._relationships = [];
     }
 
@@ -155,6 +156,23 @@
     _createClass(JsonApiDataStore, [{
       key: "destroy",
       value: function destroy(model) {
+        var self = this;
+        model._dependents.forEach(function(dependent, depIdx) {
+          self.graph[dependent.type][dependent.id]._dependents.forEach(function(val, idx) {
+            if (val.id === model.id) {
+              self.graph[dependent.type][dependent.id]._dependents.splice(idx, 1);
+            }
+          });
+          if (self.graph[dependent.type][dependent.id][dependent.relation].constructor === Array) {
+            self.graph[dependent.type][dependent.id][dependent.relation].forEach(function(val, idx) {
+              if (val.id === model.id) {
+                self.graph[dependent.type][dependent.id][dependent.relation].splice(idx, 1);
+              }
+            });
+          } else if (self.graph[dependent.type][dependent.id][dependent.relation].id === model.id) {
+            self.graph[dependent.type][dependent.id][dependent.relation] = null;
+          }
+        });
         delete this.graph[model._type][model.id];
       }
 
@@ -236,9 +254,30 @@
               if (rel.data === null) {
                 model[key] = null;
               } else if (rel.data.constructor === Array) {
-                model[key] = rel.data.map(findOrInit);
+                model[key] = rel.data.map(findOrInit).map(function(record) {
+                  var found = record._dependents.filter(function(dependent) {
+                    return dependent.id === model.id && dependent.type === model._type;
+                  });
+                  if (found.length === 0) {
+                    record._dependents.push({
+                      id: model.id,
+                      type: model._type,
+                      relation: key
+                    });
+                  }
+                });
               } else {
                 model[key] = findOrInit(rel.data);
+                var found = model[key]._dependents.filter(function(dependent) {
+                  return dependent.id === model.id && dependent.type === model._type;
+                });
+                if (found.length === 0) {
+                  model[key]._dependents.push({
+                    id: model.id,
+                    type: model._type,
+                    relation: key
+                  });
+                }
               }
             }
             if (rel.links) {
@@ -285,10 +324,12 @@
     return JsonApiDataStore;
   })();
 
-  module.exports = {
-    JsonApiDataStore: JsonApiDataStore,
-    JsonApiDataStoreModel: JsonApiDataStoreModel
-  };
+  if ('undefined' !== typeof module) {
+    module.exports = {
+      JsonApiDataStore: JsonApiDataStore,
+      JsonApiDataStoreModel: JsonApiDataStoreModel
+    };
+  }
 
   exports.JsonApiDataStore = JsonApiDataStore;
   exports.JsonApiDataStoreModel = JsonApiDataStoreModel;

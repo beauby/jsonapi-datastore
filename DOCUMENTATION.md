@@ -1,6 +1,6 @@
 
 
-<!-- Start src/jsonapi-datastore.js -->
+<!-- Start src\jsonapi-datastore.js -->
 
 ## JsonApiDataStoreModel
 
@@ -108,5 +108,5 @@ Sync a JSONAPI-compliant payload with the store.
 
 * **object** The model/array of models corresponding to the payload's primary resource(s).
 
-<!-- End src/jsonapi-datastore.js -->
+<!-- End src\jsonapi-datastore.js -->
 
