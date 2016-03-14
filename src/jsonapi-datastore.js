@@ -11,7 +11,65 @@
     this.id = id;
     this._type = type;
     this._attributes = [];
+    this._dependents = [];
     this._relationships = [];
+  }
+
+  /**
+   * Add a dependent to a model.
+   * @method _addDependence
+   * @param {string} type The type of the dependent model.
+   * @param {string} id The id of the dependent model.
+   * @param {string} key The name of the relation found on the dependent model.
+    */
+  _addDependence(type, id, key) {
+    var self = this,
+      found;
+
+    found = self._dependents.find(function(dependent) {
+      return dependent.id === id && dependent.type === type && dependent.relation === key;
+    });
+    if (found === undefined) {
+      self._dependents.push({id: id, type: type, relation: key});
+    }
+  }
+
+  /**
+   * Removes a dependent from a model.
+   * @method _removeDependence
+   * @param {string} type The type of the dependent model.
+   * @param {string} id The id of the dependent model.
+    */
+  _removeDependence(type, id) {
+    var self = this,
+      found;
+
+    self._dependents.forEach(function(val, idx) {
+      if (val.id === id && val.type === type) {
+        self._dependents.splice(idx, 1);
+      }
+    });
+  }
+
+  /**
+   * Removes a relationship from a model.
+   * @method removeRelationship
+   * @param {string} type The type of the dependent model.
+   * @param {string} id The id of the dependent model.
+   * @param {string} relName The name of the relationship.
+    */
+  removeRelationship(type, id, relName) {
+    var self = this;
+    self._removeDependence(type, id);
+    if (self[relName].constructor === Array) {
+      self[relName].forEach(function(val, idx) {
+        if (val.id === id && val.type === type) {
+          self[relName].splice(idx, 1);
+        }
+      });
+    } else if (self[relName].id === id) {
+      self[relName] = null;
+    }
   }
 
   /**
@@ -100,6 +158,10 @@ class JsonApiDataStore {
    * @param {object} model The model to destroy.
    */
   destroy(model) {
+    var self = this;
+    model._dependents.forEach(function(dependent, depIdx) {
+      self.graph[dependent.type][dependent.id].removeRelationship(model._type, model.id, dependent.relation);
+    });
     delete this.graph[model._type][model.id];
   }
 
@@ -172,8 +234,10 @@ class JsonApiDataStore {
             model[key] = null;
           } else if (rel.data.constructor === Array) {
             model[key] = rel.data.map(findOrInit);
+            model[key].forEach(function(record, key) { record._addDependence(model._type, model.id, key);});
           } else {
             model[key] = findOrInit(rel.data);
+            model[key]._addDependence(model._type, model.id, key);
           }
         }
         if (rel.links) {

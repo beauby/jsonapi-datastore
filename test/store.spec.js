@@ -363,17 +363,50 @@ describe('JsonApiDataStore', () => {
   describe('.destroy()', () => {
     var store = new JsonApiDataStore(),
         payload = {
-          data: {
-            type: 'article',
-            id: 1337
-          }
-        };
+            data: [{
+              type: 'article',
+              id: 1337,
+              attributes: {
+                title: 'Cool article'
+              },
+              relationships: {
+                related_article: {
+                  data: {
+                    type: 'article',
+                    id: 1338
+                  }
+                }
+              }
+            }, {
+              type: 'article',
+              id: 1338,
+              attributes: {
+                title: 'Better article'
+              },
+              relationships: {
+                related_article: {
+                  data: {
+                    type: 'article',
+                    id: 1337
+                  }
+                }
+              }
+            }]
+          };
 
     it('should destroy an existing model', () => {
       store.sync(payload);
       store.destroy(store.find('article', 1337));
       var article = store.find('article', 1337);
       expect(article).to.eq(null);
+    });
+
+    it('should detach references on dependent models', () => {
+      store.sync(payload);
+      store.destroy(store.find('article', 1337));
+      var article = store.find('article', 1338);
+      expect(article.related_article).to.eq(null);
+      expect(article._dependents.length).to.eq(0);
     });
   });
 });
