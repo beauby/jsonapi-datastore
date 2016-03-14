@@ -70,10 +70,10 @@
         var self = this,
           found;
 
-        found = self._dependents.filter(function(dependent) {
+        found = self._dependents.find(function(dependent) {
           return dependent.id === id && dependent.type === type && dependent.relation === key;
         });
-        if (found.length === 0) {
+        if (found === undefined) {
           self._dependents.push({
             id: id,
             type: type,
