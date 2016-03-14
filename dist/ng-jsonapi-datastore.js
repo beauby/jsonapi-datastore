@@ -71,7 +71,7 @@
           found;
 
         found = self._dependents.filter(function(dependent) {
-          return dependent.id === id && dependent.type === type;
+          return dependent.id === id && dependent.type === type && dependent.relation === key;
         });
         if (found.length === 0) {
           self._dependents.push({
@@ -99,6 +99,29 @@
             self._dependents.splice(idx, 1);
           }
         });
+      }
+
+      /**
+       * Removes a relationship from a model.
+       * @method removeRelationship
+       * @param {string} type The type of the dependent model.
+       * @param {string} id The id of the dependent model.
+       * @param {string} relName The name of the relationship.
+       */
+    }, {
+      key: "removeRelationship",
+      value: function removeRelationship(type, id, relName) {
+        var self = this;
+        self._removeDependence(type, id);
+        if (self[relName].constructor === Array) {
+          self[relName].forEach(function(val, idx) {
+            if (val.id === id && val.type === type) {
+              self[relName].splice(idx, 1);
+            }
+          });
+        } else if (self[relName].id === id) {
+          self[relName] = null;
+        }
       }
 
       /**
@@ -210,16 +233,7 @@
       value: function destroy(model) {
         var self = this;
         model._dependents.forEach(function(dependent, depIdx) {
-          self.graph[dependent.type][dependent.id]._removeDependence(model._type, model.id);
-          if (self.graph[dependent.type][dependent.id][dependent.relation].constructor === Array) {
-            self.graph[dependent.type][dependent.id][dependent.relation].forEach(function(val, idx) {
-              if (val.id === model.id && val.type === model._type) {
-                self.graph[dependent.type][dependent.id][dependent.relation].splice(idx, 1);
-              }
-            });
-          } else if (self.graph[dependent.type][dependent.id][dependent.relation].id === model.id) {
-            self.graph[dependent.type][dependent.id][dependent.relation] = null;
-          }
+          self.graph[dependent.type][dependent.id].removeRelationship(model._type, model.id, dependent.relation);
         });
         delete this.graph[model._type][model.id];
       }

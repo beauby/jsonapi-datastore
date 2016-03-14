@@ -30,6 +30,16 @@ Removes a dependent from a model.
 * **string** *type* The type of the dependent model.
 * **string** *id* The id of the dependent model.
 
+## removeRelationship(type, id, relName)
+
+Removes a relationship from a model.
+
+### Params:
+
+* **string** *type* The type of the dependent model.
+* **string** *id* The id of the dependent model.
+* **string** *relName* The name of the relationship.
+
 ## serialize(opts)
 
 Serialize a model.
