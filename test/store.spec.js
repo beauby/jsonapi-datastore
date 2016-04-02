@@ -206,6 +206,28 @@ describe('JsonApiDataStore', () => {
         expect(articles[1].related_article.id).to.eq(1337);
       });
     });
+
+    context('when given a payload with errors', () => {
+      var store = new JsonApiDataStore(),
+        payload = {
+          errors: [
+            {
+              status: 422,
+              source: {
+                pointer: '/data/attributes/title'
+              },
+              detail: 'is too short (minimum is 3 characters)'
+            }
+          ]
+        };
+
+      it('should return error object', () => {
+        var articleErrors = store.sync(payload).errors;
+        expect(articleErrors[0].status).to.eq(422);
+        expect(articleErrors[0].attribute).to.eq('title');
+        expect(articleErrors[0].detail).to.eq('is too short (minimum is 3 characters)');
+      });
+    });
   });
 
   describe('.syncWithMeta()', () => {
