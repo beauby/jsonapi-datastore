@@ -56,6 +56,7 @@ describe('JsonApiDataStore', () => {
 
       it('should not duplicate the attributes if the record is processed again', () => {
         var article = store.sync(payload);
+        store.sync(payload);
         expect(article._attributes.length).to.eq(2);
       });
     });
