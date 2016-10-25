@@ -30,6 +30,10 @@ or with `npm` by running:
 ```
 $ npm install jsonapi-datastore
 ```
+or with `yarn` after cloning this repo by running
+```
+$ yarn install
+```
 
 ## Parsing data
 
