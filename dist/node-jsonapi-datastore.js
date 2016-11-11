@@ -224,7 +224,9 @@
         delete model._placeHolder;
 
         for (key in rec.attributes) {
-          model._attributes.push(key);
+          if (model._attributes.indexOf(key) === -1) {
+            model._attributes.push(key);
+          }
           model[key] = rec.attributes[key];
         }
 
@@ -285,10 +287,12 @@
     return JsonApiDataStore;
   })();
 
-  module.exports = {
-    JsonApiDataStore: JsonApiDataStore,
-    JsonApiDataStoreModel: JsonApiDataStoreModel
-  };
+  if ('undefined' !== typeof module) {
+    module.exports = {
+      JsonApiDataStore: JsonApiDataStore,
+      JsonApiDataStoreModel: JsonApiDataStoreModel
+    };
+  }
 
   exports.JsonApiDataStore = JsonApiDataStore;
   exports.JsonApiDataStoreModel = JsonApiDataStoreModel;

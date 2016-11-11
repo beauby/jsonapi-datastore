@@ -53,6 +53,12 @@ describe('JsonApiDataStore', () => {
         expect(article.title).to.eq('Cool article');
         expect(article.author).to.eq('Lucas');
       });
+
+      it('should not duplicate the attributes if the record is processed again', () => {
+        var article = store.sync(payload);
+        store.sync(payload);
+        expect(article._attributes.length).to.eq(2);
+      });
     });
 
     context('when given a payload with multiple resources', () => {

@@ -195,7 +195,9 @@ var JsonApiDataStore = (function () {
       delete model._placeHolder;
 
       for (key in rec.attributes) {
-        model._attributes.push(key);
+        if (model._attributes.indexOf(key) === -1) {
+          model._attributes.push(key);
+        }
         model[key] = rec.attributes[key];
       }
 
