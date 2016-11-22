@@ -204,6 +204,16 @@ class JsonApiDataStore {
     };
   }
 
+  formatErrors(payload) {
+    return payload.errors.map(function(error) {
+      return {
+        status: error.status,
+        attribute: error.source.pointer.split('/')[3],
+        detail: error.detail
+      };
+    })
+  };
+
   /**
    * Sync a JSONAPI-compliant payload with the store.
    * @method sync
@@ -211,6 +221,10 @@ class JsonApiDataStore {
    * @return {object} The model/array of models corresponding to the payload's primary resource(s).
    */
   sync(payload) {
+    if (payload.errors) {
+      return { errors: this.formatErrors(payload) };
+    }
+
     return this.syncWithMeta(payload).data;
   }
 }
