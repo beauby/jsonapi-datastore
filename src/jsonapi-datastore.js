@@ -1,3 +1,5 @@
+import { index, matches01 } from 'static-interval-tree';
+
 const TIME_RANGE_REGEX = /\"(.+)\",\"(.+)\"/g;
 
 /**
@@ -256,9 +258,23 @@ class JsonApiDataStore {
     for (var type in this._timeRange) {
       var timeRangeConfig = this._timeRange[type];
       var records = this.graph[type];
+      if (timeRangeConfig.index) {
+        timeRangeConfig._idx = [];
+      }
       for (var id in records) {
         var record = records[id];
-        record[timeRangeConfig.field] = toTimeRange(record[timeRangeConfig.field]);
+        var timeRange = toTimeRange(record[timeRangeConfig.field]);
+        record[timeRangeConfig.field] = timeRange;
+        if (timeRangeConfig._idx && timeRange) {
+          timeRangeConfig._idx.push({
+            start: timeRange.start,
+            end: timeRange.end,
+            record: record
+          });
+        }
+      }
+      if (timeRangeConfig._idx) {
+        timeRangeConfig._idx = index(timeRangeConfig._idx);
       }
     }
   }
@@ -270,11 +286,19 @@ class JsonApiDataStore {
         var timeRangeConfig = this._timeRange[type];
         var records = this.graph[type];
         var filteredRecords = {};
-        for (var id in records) {
-          var record = records[id];
-          var recordTimeRange = record[timeRangeConfig.field];
-          if (recordTimeRange && isOverlap(recordTimeRange, start, end)) {
-            filteredRecords[id] = record;
+        if (timeRangeConfig._idx) {
+          var overlapping = matches01(timeRangeConfig._idx, {start: start, end: end});
+          for (var i in overlapping) {
+            var record = overlapping[i].record;
+            filteredRecords[record.id] = record;
+          }
+        } else {
+          for (var id in records) {
+            var record = records[id];
+            var recordTimeRange = record[timeRangeConfig.field];
+            if (recordTimeRange && isOverlap(recordTimeRange, start, end)) {
+              filteredRecords[id] = record;
+            }
           }
         }
         targetGraph[type] = filteredRecords;
