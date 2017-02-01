@@ -1,3 +1,7 @@
+import { index, matches01 } from 'static-interval-tree';
+
+const TIME_RANGE_REGEX = /\"(.+)\",\"(.+)\"/g;
+
 /**
  * @class JsonApiDataStoreModel
  */
@@ -90,8 +94,10 @@ class JsonApiDataStore {
   /**
    * @method constructor
    */
-  constructor() {
+  constructor(opts = {}) {
     this.graph = {};
+    this.opts = opts;
+    this.initTimeRangeOption(opts);
   }
 
   /**
@@ -126,6 +132,17 @@ class JsonApiDataStore {
 
     if (!this.graph[type]) return [];
     return Object.keys(self.graph[type]).map(function(v) { return self.graph[type][v]; });
+  }
+
+  findAllByTimeRange(type, start = null, end = null) {
+    if (!start && !end) {
+      return this.findAll(type);
+    }
+    start = start ? start.getTime() : -Infinity;
+    end = end ? end.getTime() : Infinity;
+    var graph = this.timeRangeFilteredGraph(start, end);
+
+    return Object.keys(graph[type]).map(function(v) { return graph[type][v]; });
   }
 
   /**
@@ -198,8 +215,10 @@ class JsonApiDataStore {
         syncRecord = this.syncRecord.bind(this);
     if (!primary) return [];
     if (payload.included) payload.included.map(syncRecord);
+    var data = (primary.constructor === Array) ? primary.map(syncRecord) : syncRecord(primary);
+    this.processTimeRange();
     return {
-      data: (primary.constructor === Array) ? primary.map(syncRecord) : syncRecord(primary),
+      data: data,
       meta: ("meta" in payload) ? payload.meta : null
     };
   }
@@ -213,6 +232,134 @@ class JsonApiDataStore {
   sync(payload) {
     return this.syncWithMeta(payload).data;
   }
+
+  initTimeRangeOption(opts) {
+    if (!opts.timeRange || Object.keys(opts.timeRange) <= 0) {
+      return;
+    }
+    var timeRange = {};
+    for (var type in opts.timeRange) {
+      if (typeof opts.timeRange[type] === 'string') {
+        timeRange[type] = {
+          field: opts.timeRange[type],
+          index: false
+        };
+      } else {
+        timeRange[type] = opts.timeRange[type];
+      }
+    }
+    this._timeRange = timeRange;
+  }
+
+  processTimeRange() {
+    if (!this._timeRange) {
+      return;
+    }
+    for (var type in this._timeRange) {
+      var timeRangeConfig = this._timeRange[type];
+      var records = this.graph[type];
+      if (timeRangeConfig.index) {
+        timeRangeConfig._idx = [];
+      }
+      for (var id in records) {
+        var record = records[id];
+        var timeRange = toTimeRange(record[timeRangeConfig.field]);
+        record[timeRangeConfig.field] = timeRange;
+        if (timeRangeConfig._idx && timeRange) {
+          timeRangeConfig._idx.push({
+            start: timeRange.start,
+            end: timeRange.end,
+            record: record
+          });
+        }
+      }
+      if (timeRangeConfig._idx) {
+        timeRangeConfig._idx = index(timeRangeConfig._idx);
+      }
+    }
+  }
+
+  timeRangeFilteredGraph(start, end) {
+    var targetGraph = {};
+    for (var type in this.graph) {
+      if (type in this._timeRange) {
+        var timeRangeConfig = this._timeRange[type];
+        var records = this.graph[type];
+        var filteredRecords = {};
+        if (timeRangeConfig._idx) {
+          var overlapping = matches01(timeRangeConfig._idx, {start: start, end: end});
+          for (var i in overlapping) {
+            var record = overlapping[i].record;
+            filteredRecords[record.id] = record;
+          }
+        } else {
+          for (var id in records) {
+            var record = records[id];
+            var recordTimeRange = record[timeRangeConfig.field];
+            if (recordTimeRange && isOverlap(recordTimeRange, start, end)) {
+              filteredRecords[id] = record;
+            }
+          }
+        }
+        targetGraph[type] = filteredRecords;
+      } else {
+        targetGraph[type] = this.graph[type];
+      }
+    }
+    return this.consolidate(targetGraph);
+  }
+
+  consolidate(graph) {
+    for (var type in graph) {
+      var records = graph[type];
+      var targetRecords = {};
+      for (var id in records) {
+        var record = records[id];
+        var target = {};
+        for (var i in record._attributes) {
+          var attr = record._attributes[i];
+          target[attr] = record[attr];
+        }
+        for (var i in record._relationships) {
+          var relationshipType = record._relationships[i];
+          var relationships = record[relationshipType];
+
+          if (relationships.constructor === Array) {
+            var rels = [];
+
+            for (var j in relationships) {
+              var relRecord = relationships[j];
+              var r = graph[relRecord._type][relRecord.id];
+              if (r) {
+                rels.push(r);
+              }
+            }
+            target[relationshipType] = rels;
+          } else {
+            target[relationshipType] = graph[relationships._type][relationships.id];
+          }
+        }
+        targetRecords[id] = target;
+      }
+      graph[type] = targetRecords;
+    }
+    return graph;
+  }
+}
+
+function isOverlap(record, start, end) {
+  return record.start < end && record.end >= start;
+}
+
+function toTimeRange(timeRangeString) {
+  var r = TIME_RANGE_REGEX.exec(timeRangeString);
+  if (r && r.length === 3) {
+    return {
+      start: new Date(r[1]).getTime(),
+      end: new Date(r[2]).getTime()
+    };
+  }
+  return null;
 }
 
 if ('undefined' !== typeof module) {
