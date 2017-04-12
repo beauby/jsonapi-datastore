@@ -341,22 +341,28 @@ describe('JsonApiDataStore', () => {
         payload = {
           data: [
             {
-              type: 'article',
-              id: 1337
+                type: 'article',
+                id: 1338
+            },
+            {
+                type: 'article',
+                id: 1336
             },
             {
               type: 'article',
-              id: 1338
-            }
+              id: 1337
+            },
+
           ]
         };
 
-    it('should find all existing models', () => {
+    it('should find all existing models in order of the given payload', () => {
       store.sync(payload);
       var articles = store.findAll('article');
-      expect(articles.length).to.eq(2);
-      expect(articles[0].id).to.eq(1337);
-      expect(articles[1].id).to.eq(1338);
+      expect(articles.length).to.eq(3);
+      expect(articles[0].id).to.eq(1338);
+      expect(articles[1].id).to.eq(1336);
+      expect(articles[2].id).to.eq(1337);
     });
 
     it('should not find a non-existing model', () => {
@@ -375,11 +381,13 @@ describe('JsonApiDataStore', () => {
           }
         };
 
-    it('should destroy an existing model', () => {
+    it('should destroy an existing model and remove the id from the order cache', () => {
       store.sync(payload);
       store.destroy(store.find('article', 1337));
       var article = store.find('article', 1337);
       expect(article).to.eq(null);
+
+      expect(store.order['article'][0]).to.eq(undefined);
     });
   });
 });
