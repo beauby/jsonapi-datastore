@@ -152,6 +152,7 @@
       _classCallCheck(this, JsonApiDataStore);
 
       this.graph = {};
+      this.order = {};
     }
 
     /**
@@ -164,6 +165,7 @@
       key: "destroy",
       value: function destroy(model) {
         delete this.graph[model._type][model.id];
+        this.order[model._type].splice(this.order[model._type].indexOf(model.id), 1);
       }
 
       /**
@@ -192,8 +194,8 @@
         var self = this;
 
         if (!this.graph[type]) return [];
-        return Object.keys(self.graph[type]).map(function(v) {
-          return self.graph[type][v];
+        return self.order[type].map(function(modelId) {
+          return self.graph[type][modelId];
         });
       }
 
@@ -205,13 +207,22 @@
       key: "reset",
       value: function reset() {
         this.graph = {};
+        this.order = {};
       }
     }, {
       key: "initModel",
       value: function initModel(type, id) {
         this.graph[type] = this.graph[type] || {};
+        this.order[type] = this.order[type] || [];
         this.graph[type][id] = this.graph[type][id] || new JsonApiDataStoreModel(type, id);
-
+        var currentOrderIndex = this.order[type].indexOf(id);
+        if (currentOrderIndex === -1) {
+          this.order[type].push(id);
+        } else {
+          // remove the id from the current order and add it to the bottom
+          this.order[type].splice(currentOrderIndex, 1);
+          this.order[type].push(id);
+        }
         return this.graph[type][id];
       }
     }, {
