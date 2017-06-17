@@ -184,7 +184,8 @@ class JsonApiDataStore {
         }
         if (rel.links) {
           model._links = model._links || {};
-          model._links[key] = rel.links;
+          model._links._relationships = model._links._relationships || {};
+          model._links._relationships[key] = rel.links;
         }
       }
     }

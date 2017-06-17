@@ -212,6 +212,88 @@ describe('JsonApiDataStore', () => {
         expect(articles[1].related_article.id).to.eq(1337);
       });
     });
+
+    context('when given a payload with a link', () => {
+      var store = new JsonApiDataStore(),
+          payload = {
+            data: {
+              type: 'article',
+              id: 1337,
+              links: {
+                self: 'https://example.com/articles/1337'
+              }
+            }
+          };
+
+      it('should set the links', () => {
+        var article = store.sync(payload);
+        expect(article._links.self).to.eq('https://example.com/articles/1337');
+      });
+    });
+
+    context('when given a payload with relationships containing links', () => {
+      var store = new JsonApiDataStore(),
+          payload = {
+            data: {
+              type: 'article',
+              id: 1337,
+              relationships: {
+                author: {
+                  data: {
+                    type: 'user',
+                    id: 1
+                  },
+                  links: {
+                    self: 'http://example.com/articles/1337/relationships/user',
+                    related: 'http://example.com/articles/1337/user'
+                  },
+                }
+              }
+            }
+          };
+
+      it('should set the relationship links', () => {
+        var article = store.sync(payload);
+        expect(article._links._relationships.author.self).to.eq('http://example.com/articles/1337/relationships/user');
+        expect(article._links._relationships.author.related).to.eq('http://example.com/articles/1337/user');
+      });
+    });
+
+    context('when given a payload with links and relationships containing links', () => {
+      var store = new JsonApiDataStore(),
+          payload = {
+            data: {
+              type: 'article',
+              id: 1337,
+              links: {
+                self: 'https://example.com/articles/1337'
+              },
+              relationships: {
+                author: {
+                  data: {
+                    type: 'user',
+                    id: 1
+                  },
+                  links: {
+                    self: 'http://example.com/articles/1337/relationships/user',
+                    related: 'http://example.com/articles/1337/user'
+                  },
+                }
+              }
+            }
+          };
+
+      it('should set the links', () => {
+        var article = store.sync(payload);
+        expect(article._links.self).to.eq('https://example.com/articles/1337');
+      });
+
+      it('should set the relationship links', () => {
+        var article = store.sync(payload);
+        expect(article._links._relationships.author.self).to.eq('http://example.com/articles/1337/relationships/user');
+        expect(article._links._relationships.author.related).to.eq('http://example.com/articles/1337/user');
+      });
+    });
   });
 
   describe('.syncWithMeta()', () => {

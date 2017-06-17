@@ -238,6 +238,10 @@
           model[key] = rec.attributes[key];
         }
 
+        if (rec.links) {
+          model._links = rec.links;
+        }
+
         if (rec.relationships) {
           for (key in rec.relationships) {
             var rel = rec.relationships[key];
@@ -252,7 +256,9 @@
               }
             }
             if (rel.links) {
-              console.log("Warning: Links not implemented yet.");
+              model._links = model._links || {};
+              model._links._relationships = model._links._relationships || {};
+              model._links._relationships[key] = rel.links;
             }
           }
         }
