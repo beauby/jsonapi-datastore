@@ -251,6 +251,10 @@ var JsonApiDataStore = (function () {
   }, {
     key: "sync",
     value: function sync(payload) {
+      if (payload.errors) {
+        return { errors: payload.errors };
+      }
+
       return this.syncWithMeta(payload).data;
     }
   }]);

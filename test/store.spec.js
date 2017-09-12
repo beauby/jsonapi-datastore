@@ -6,13 +6,22 @@ import {JsonApiDataStore} from '../src/jsonapi-datastore.js';
 describe('JsonApiDataStore', () => {
   describe('.sync()', () => {
     context('when given a simple payload', () => {
-      var store = new JsonApiDataStore(),
-          payload = {
+      var store = new JsonApiDataStore();
+      var payload = {
             data: {
               type: 'article',
               id: 1337
             }
           };
+      var errorPayload = {
+        errors: {
+          type: 'article',
+          status: 'error',
+          message: "Article not found",
+          code: '404'
+        }
+      };
+
 
       it('should set the id', () => {
         var article = store.sync(payload);
@@ -33,6 +42,12 @@ describe('JsonApiDataStore', () => {
         var article = store.sync(payload);
         expect(article._relationships).to.deep.eq([]);
       });
+
+      it('should return errors from the payload', () => {
+          var articleErrors = store.sync(errorPayload);
+          expect(articleErrors).to.have.property('errors');
+      });
+
     });
 
     context('when given a payload with simple attributes', () => {

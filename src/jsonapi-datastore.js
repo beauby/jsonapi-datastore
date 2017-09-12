@@ -211,6 +211,10 @@ class JsonApiDataStore {
    * @return {object} The model/array of models corresponding to the payload's primary resource(s).
    */
   sync(payload) {
+    if (payload.errors) {
+      return { errors: payload.errors };
+    }
+
     return this.syncWithMeta(payload).data;
   }
 }
