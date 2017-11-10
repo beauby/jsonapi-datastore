@@ -114,7 +114,19 @@ class JsonApiDataStore {
     if (!this.graph[type] || !this.graph[type][id]) return null;
     return this.graph[type][id];
   }
-
+   /**
+    * Retrieve all models by type, attribute and value.
+    * @method findByAttr
+    * @param {string} type The type of the model.
+    * @return {object} The corresponding model if present, and null otherwise.
+    */
+   findByAttr(type, attr, value) {
+     if (!this.graph[type]) return null;
+     var typeDatas = this.graph[type];
+     for (var typeData in typeDatas) {
+       if(typeDatas[typeData][attr] == value) return typeDatas[typeData];
+     }
+   }
   /**
    * Retrieve all models by type.
    * @method findAll
